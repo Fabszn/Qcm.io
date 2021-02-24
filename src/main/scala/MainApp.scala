@@ -1,25 +1,14 @@
+import zio.console._
 
-import cats.effect.IO
-import cats.implicits._
-import tagless.service.UserService
+object MyApp extends zio.App {
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.util.Success
+  def run(args: List[String]) =
+    myAppLogic.exitCode
 
-object MainApp extends App {
-
-  import tagless.repo.repoInterpreter._
-
-  val d: Future[String] = UserService.getUserName[Future](1.toLong)
-  d.onComplete(f => f match{
-    case Success(value) => println(value)
-    case _ => println("error")
-  })
-
-
-
-
+  val myAppLogic =
+    for {
+      _    <- putStrLn("Hello! What is your name?")
+      name <- getStrLn
+      _    <- putStrLn(s"Hello, ${name}, welcome to ZIO!")
+    } yield ()
 }
-
-
