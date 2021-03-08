@@ -1,4 +1,3 @@
-import bloop.shaded.ch.epfl.scala.bsp4j.JavacOptionsParams
 
 version := "1.0-SNAPSHOT"
 
@@ -22,7 +21,8 @@ lazy val httpServer = (project in file("http-server"))
   http4sBlazeServer,
   http4sDsl,
   `zio-interop-cats`,
-)
+),
+    dockerExposedPorts := List(8001)
 )
 
 
