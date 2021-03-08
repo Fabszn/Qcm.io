@@ -1,3 +1,5 @@
+import bloop.shaded.ch.epfl.scala.bsp4j.JavacOptionsParams
+
 version := "1.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.12.13"
@@ -9,11 +11,19 @@ lazy val Http4sVersion = "0.21.19"
 lazy val zio = "dev.zio" %% "zio" %  zioVersion
 lazy val http4sBlazeServer = "org.http4s"  %% "http4s-blaze-server" % Http4sVersion
 lazy val http4sDsl = "org.http4s"      %% "http4s-dsl"          % Http4sVersion
-//lazy val cats = "org.typelevel" %% "cats-core" % "2.1.1"
-//lazy val catsEffect =  "org.typelevel" %% "cats-effect" % "2.2.0"
-//lazy val `zio-interop-shared` = "dev.zio" %% "zio-interop-shared" % zioVersion
 lazy val `zio-interop-cats` = "dev.zio" %% "zio-interop-cats" % `zio-interop`
-//lazy val `zio-streams` = "dev.zio" %% "zio-streams" % zioVersion
+
+
+
+lazy val httpServer = (project in file("http-server"))
+.enablePlugins(JavaAppPackaging, DockerPlugin)
+  .settings( libraryDependencies ++= Seq(
+  zio,
+  http4sBlazeServer,
+  http4sDsl,
+  `zio-interop-cats`,
+)
+)
 
 
 lazy val myScalacOptions = Seq(
@@ -31,11 +41,6 @@ lazy val myScalacOptions = Seq(
   "-Ywarn-value-discard",
 )
 
- libraryDependencies ++= Seq(
-      zio,
-    http4sBlazeServer,
-    http4sDsl,
-   `zio-interop-cats`,
-  )
+
 
 
