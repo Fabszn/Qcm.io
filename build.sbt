@@ -7,29 +7,33 @@ lazy val zioVersion = "1.0.4-2"
 lazy val `zio-interop` = "2.3.1.0"
 lazy val Http4sVersion = "0.21.19"
 
-lazy val zio = "dev.zio" %% "zio" %  zioVersion
-lazy val http4sBlazeServer = "org.http4s"  %% "http4s-blaze-server" % Http4sVersion
-lazy val http4sDsl = "org.http4s"      %% "http4s-dsl"          % Http4sVersion
+lazy val zio = "dev.zio" %% "zio" % zioVersion
+lazy val http4sBlazeServer =
+  "org.http4s" %% "http4s-blaze-server" % Http4sVersion
+lazy val http4sDsl = "org.http4s" %% "http4s-dsl" % Http4sVersion
 lazy val `zio-interop-cats` = "dev.zio" %% "zio-interop-cats" % `zio-interop`
-
-
+lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
+lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.14.1"
 
 lazy val httpServer = (project in file("http-server"))
-.enablePlugins(JavaAppPackaging, DockerPlugin)
-  .settings( libraryDependencies ++= Seq(
-  zio,
-  http4sBlazeServer,
-  http4sDsl,
-  `zio-interop-cats`,
-),
-    dockerExposedPorts := List(8001)
-)
+  .enablePlugins(JavaAppPackaging, DockerPlugin)
+  .settings(
+    libraryDependencies ++= Seq(
+      zio,
+      http4sBlazeServer,
+      http4sDsl,
+      `zio-interop-cats`,
+      logback,
+      pureConfig
+    )
+  )
 
 
 lazy val myScalacOptions = Seq(
   "-feature",
   "-deprecation",
-  "-encoding", "UTF-8",
+  "-encoding",
+  "UTF-8",
   "-unchecked",
   "-deprecation",
   "-Xfuture",
@@ -38,9 +42,5 @@ lazy val myScalacOptions = Seq(
   "-language:postfixOps",
   "-language:higherKinds",
   "-language:implicitConversions",
-  "-Ywarn-value-discard",
+  "-Ywarn-value-discard"
 )
-
-
-
-
