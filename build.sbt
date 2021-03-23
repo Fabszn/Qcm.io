@@ -1,4 +1,3 @@
-
 version := "1.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.12.13"
@@ -15,6 +14,7 @@ lazy val `zio-interop-cats` = "dev.zio" %% "zio-interop-cats" % `zio-interop`
 lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
 lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.14.1"
 
+lazy val model = (project in file("model"))
 lazy val httpServer = (project in file("http-server"))
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .settings(
@@ -27,7 +27,7 @@ lazy val httpServer = (project in file("http-server"))
       pureConfig
     )
   )
-
+  .dependsOn(model)
 
 lazy val myScalacOptions = Seq(
   "-feature",
