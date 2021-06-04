@@ -25,6 +25,15 @@ lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.14.1"
 
 
 lazy val model = (project in file("model"))
+lazy val db = (project in file("db")).enablePlugins(FlywayPlugin).settings(
+  libraryDependencies += "org.postgresql" % "postgresql" % "42.1.1",
+
+    flywayUrl := "jdbc:postgresql://localhost/qcmio",
+flywayUser := "qcmioUser",
+flywayPassword := "qcmio",
+flywayLocations += "db/migration"
+
+)
 
 
 lazy val httpServer = (project in file("http-server"))
@@ -43,12 +52,6 @@ lazy val httpServer = (project in file("http-server"))
   .dependsOn(model)
 
 
-libraryDependencies += "org.postgresql" % "postgresql" % "42.1.1"
-enablePlugins(FlywayPlugin)
-flywayUrl := "jdbc:postgresql://localhost/qcmio"
-flywayUser := "qcmioUser"
-flywayPassword := "qcmio"
-flywayLocations += "db/migration"
 
 
 lazy val myScalacOptions = Seq(
