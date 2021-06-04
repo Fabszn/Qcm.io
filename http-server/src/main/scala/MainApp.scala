@@ -27,5 +27,7 @@ object MyApp extends zio.App {
     } yield server
 
   def run(args: List[String]) =
-    program.provideSomeLayer[ZEnv](Configuration.live).fold(_ => ZExitCode.failure, _ => ZExitCode.success)
+    program
+      .provideSomeLayer[ZEnv](Configuration.live)
+      .fold(_ => ZExitCode.failure, _ => ZExitCode.success)
 }

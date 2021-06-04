@@ -7,10 +7,10 @@ lazy val `zio-interop` = "2.3.1.0"
 lazy val Http4sVersion = "0.21.19"
 
 lazy val doobie = Seq( // Start with this one
-  "org.tpolecat" %% "doobie-core"      % "0.8.4",
-  "org.tpolecat" %% "doobie-postgres"  % "0.8.4", // Postgres driver 42.2.8 + type mappings.
-  "org.tpolecat" %% "doobie-hikari"     % "0.8.4",
-  "org.tpolecat" %% "doobie-specs2"    % "0.8.4" % "test", // Specs2 support for typechecking statements.
+  "org.tpolecat" %% "doobie-core" % "0.8.4",
+  "org.tpolecat" %% "doobie-postgres" % "0.8.4", // Postgres driver 42.2.8 + type mappings.
+  "org.tpolecat" %% "doobie-hikari" % "0.8.4",
+  "org.tpolecat" %% "doobie-specs2" % "0.8.4" % "test", // Specs2 support for typechecking statements.
   "org.tpolecat" %% "doobie-scalatest" % "0.8.4" % "test"
 )
 
@@ -22,19 +22,16 @@ lazy val `zio-interop-cats` = "dev.zio" %% "zio-interop-cats" % `zio-interop`
 lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
 lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.14.1"
 
-
-
 lazy val model = (project in file("model"))
-lazy val db = (project in file("db")).enablePlugins(FlywayPlugin).settings(
-  libraryDependencies += "org.postgresql" % "postgresql" % "42.1.1",
-
+lazy val db = (project in file("db"))
+  .enablePlugins(FlywayPlugin)
+  .settings(
+    libraryDependencies += "org.postgresql" % "postgresql" % "42.1.1",
     flywayUrl := "jdbc:postgresql://localhost/qcmio",
-flywayUser := "qcmioUser",
-flywayPassword := "qcmio",
-flywayLocations += "db/migration"
-
-)
-
+    flywayUser := "qcmioUser",
+    flywayPassword := "qcmio",
+    flywayLocations += "db/migration"
+  )
 
 lazy val httpServer = (project in file("http-server"))
   .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -50,9 +47,6 @@ lazy val httpServer = (project in file("http-server"))
     )
   )
   .dependsOn(model)
-
-
-
 
 lazy val myScalacOptions = Seq(
   "-feature",
