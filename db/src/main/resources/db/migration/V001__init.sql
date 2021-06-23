@@ -1,5 +1,5 @@
-CREATE TABLE users (
-pkid_user INT CONSTRAINT pk_user PRIMARY KEY,
-name varchar not null
+CREATE TABLE t_question (
+pkid_question INT CONSTRAINT pk_question PRIMARY KEY,
+label varchar not null
 
 );
