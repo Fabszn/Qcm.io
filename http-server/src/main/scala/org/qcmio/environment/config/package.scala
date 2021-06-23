@@ -6,5 +6,4 @@ import zio.Has
 package object config {
   type Configuration = Has[HttpConf] with Has[DbConf]
 
-
 }

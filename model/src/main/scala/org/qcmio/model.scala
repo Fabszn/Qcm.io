@@ -2,18 +2,11 @@ package org.qcmio
 
 object model {
 
-  final case class QCMErrorReport(value: String) extends AnyVal
+  final case class Question(id: Question.Id, label: Question.Label)
 
-  object settings {
-
-    final case class Api(port: Int, host: String)
-    final case class Db(
-        url: String,
-        driver: String,
-        user: String,
-        password: String
-    )
-
+  object Question {
+    final case class Id(value: Long) extends AnyVal
+    final case class Label(value: String) extends AnyVal
   }
 
 }
