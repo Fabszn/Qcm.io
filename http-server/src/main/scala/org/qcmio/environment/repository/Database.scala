@@ -15,6 +15,6 @@ private[repository] final case class Database(xa: Transactor[Task])
   val ctx = new DoobieContext.Postgres(SnakeCase)
   import ctx._
   def saveQuestion(question: model.Question): Task[Long] = run(quote {
-    query[Question].insert(lift(question))
+    querySchema[Question]("t_question", (_.id -> "pkid_question")).insert(lift(question))
   }).transact(xa)
 }
