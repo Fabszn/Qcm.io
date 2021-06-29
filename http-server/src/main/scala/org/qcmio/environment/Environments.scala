@@ -2,7 +2,7 @@ package org.qcmio.environment
 
 import org.qcmio.environment.config.Configuration
 import org.qcmio.environment.repository.{DbTransactor, QuestionRepository, QuestionsRepository}
-import zio.{ULayer, URLayer}
+import zio.ULayer
 import zio.clock.Clock
 
 object Environments {
