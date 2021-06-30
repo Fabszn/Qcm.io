@@ -11,12 +11,12 @@ package object repository {
   type DbTransactor = Has[DbTransactor.Resource]
   type QuestionRepository = Has[QuestionsRepository.Service]
 
+
+
   //alias
 
   def saveQuestion(q: Question): RIO[QuestionRepository, Task[Long]] =
-    RIO.access(_.get.saveQuestion(q)
-    )
-
+    RIO.access(_.get.saveQuestion(q))
 
   object DbTransactor {
 

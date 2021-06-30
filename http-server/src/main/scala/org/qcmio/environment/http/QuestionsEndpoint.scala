@@ -19,12 +19,14 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
   private val prefixPath = "/questions"
 
   private val httpRoutes = HttpRoutes.of[QuestionsIO] {
-    case GET -> Root =>
-    val r: RIO[QuestionRepository, Task[Long]] = saveQuestion(Question(Question.Id(1), Question.Label("question 1")))//.flatMap(qId => Ok(qId.asJson))
-      for{
+    case GET -> Root / LongVar(id) =>
+      val r: RIO[QuestionRepository, Task[Long]] = saveQuestion(
+        Question(Question.Id(id), Question.Label("question 1"))
+      ) //.flatMap(qId => Ok(qId.asJson))
+      for {
         res <- r
         json <- Ok(res.map(_.asJson))
-      }yield json
+      } yield json
   }
 
   val routes: HttpRoutes[QuestionsIO] = Router(

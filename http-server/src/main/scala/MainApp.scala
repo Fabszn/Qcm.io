@@ -16,7 +16,7 @@ import zio.{ExitCode => ZExitCode, _}
 
 object QcmIOApp extends zio.App {
 
-type ServerRIO[A] = RIO[AppEnvironment, A]
+  type ServerRIO[A] = RIO[AppEnvironment, A]
   val program =
     for {
       server <- ZIO
@@ -32,15 +32,15 @@ type ServerRIO[A] = RIO[AppEnvironment, A]
         }
     } yield server
 
-  def initRoutes(rootPath:String): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] =
-{
-  val questionEndpoint = new QuestionsEndpoint[AppEnvironment]
+  def initRoutes(
+      rootPath: String
+  ): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
+    val questionEndpoint = new QuestionsEndpoint[AppEnvironment]
 
-  val routes = questionEndpoint.routes
-  Router[ServerRIO](rootPath -> routes).orNotFound
+    val routes = questionEndpoint.routes
+    Router[ServerRIO](rootPath -> routes).orNotFound
 
-
-}
+  }
   def run(args: List[String]) =
     program
       .provideLayer(appEnvironment)

@@ -3,10 +3,8 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.13.6"
 
-
-
-
-lazy val model = (project in file("model")).settings(libraryDependencies ++= circle)
+lazy val model =
+  (project in file("model")).settings(libraryDependencies ++= circle)
 lazy val db = (project in file("db"))
   .enablePlugins(FlywayPlugin)
   .settings(

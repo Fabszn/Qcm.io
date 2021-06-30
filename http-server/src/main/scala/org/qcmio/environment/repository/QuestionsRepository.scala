@@ -12,19 +12,19 @@ import zio.interop.catz._
 object QuestionsRepository {
 
   trait Service {
-    val xa:Transactor[Task]
+    val xa: Transactor[Task]
     def saveQuestion(question: Question): Task[Long]
   }
 
   private[repository] final case class QuestionsRepository(xa: Transactor[Task])
-    extends Service {
-
-    val ctx = new DoobieContext.Postgres(SnakeCase)
+      extends Service with DBContext {
 
     import ctx._
 
     def saveQuestion(question: model.Question): Task[Long] = run(quote {
-      querySchema[Question]("t_question", (_.id -> "pkid_question")).insert(lift(question))
+      querySchema[Question]("t_question", _.id -> "pkid_question").insert(
+        lift(question)
+      )
     }).transact(xa)
   }
   val live: URLayer[DbTransactor, QuestionRepository] = ZLayer.fromService {
