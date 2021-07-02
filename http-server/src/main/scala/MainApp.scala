@@ -7,11 +7,9 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import org.qcmio.environment.Environments.{AppEnvironment, appEnvironment}
 import org.qcmio.environment.config.Configuration.HttpConf
 import org.qcmio.environment.http.QuestionsEndpoint
-import org.qcmio.environment.repository.QuestionRepository
 import org.http4s.implicits._
 import org.http4s.server.Router
 import zio.interop.catz._
-import zio.interop.catz.implicits._
 import zio.{ExitCode => ZExitCode, _}
 
 object QcmIOApp extends zio.App {
@@ -20,16 +18,16 @@ object QcmIOApp extends zio.App {
   val program =
     for {
       server <- ZIO
-        .runtime[AppEnvironment]
-        .flatMap { implicit rts =>
-          val conf = rts.environment.get[HttpConf]
-          BlazeServerBuilder[ServerRIO](rts.platform.executor.asEC)
-            .bindHttp(conf.port, conf.host)
-            .withHttpApp(initRoutes("qcm"))
-            .serve
-            .compile[ServerRIO, ServerRIO, ExitCode]
-            .drain
-        }
+                 .runtime[AppEnvironment]
+                 .flatMap { implicit rts =>
+                   val conf = rts.environment.get[HttpConf]
+                   BlazeServerBuilder[ServerRIO](rts.platform.executor.asEC)
+                     .bindHttp(conf.port, conf.host)
+                     .withHttpApp(initRoutes("qcm"))
+                     .serve
+                     .compile[ServerRIO, ServerRIO, ExitCode]
+                     .drain
+                 }
     } yield server
 
   def initRoutes(

@@ -8,28 +8,31 @@ import zio.interop.catz._
 
 package object repository {
 
-  type DbTransactor = Has[DbTransactor.Resource]
+  type DbTransactor       = Has[DbTransactor.Resource]
   type QuestionRepository = Has[QuestionsRepository.Service]
-
-
 
   //alias
 
-  def saveQuestion(q: Question): RIO[QuestionRepository, Task[Long]] =
-    RIO.access(_.get.saveQuestion(q))
+  object question {
+    def saveQuestion(q: Question.Label): RIO[QuestionRepository, Task[Long]] =
+      RIO.access(_.get.saveQuestion(q))
 
+    def getQuestion(id:Question.Id) : RIO[QuestionRepository, Task[Option[Question]]] =
+      RIO.access(_.get.getQuestion(id))
+  }
   object DbTransactor {
 
     val postgres: URLayer[Has[Configuration.DbConf], DbTransactor] =
-      ZLayer.fromService(conf =>
-        new Resource {
-          override val xa: Transactor[Task] = Transactor.fromDriverManager(
-            conf.driver,
-            conf.url,
-            conf.user,
-            conf.password
-          )
-        }
+      ZLayer.fromService(
+        conf =>
+          new Resource {
+            override val xa: Transactor[Task] = Transactor.fromDriverManager(
+              conf.driver,
+              conf.url,
+              conf.user,
+              conf.password
+            )
+          }
       )
 
     trait Resource {

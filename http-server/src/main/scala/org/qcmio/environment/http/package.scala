@@ -7,7 +7,8 @@ import org.http4s.circe.jsonEncoderOf
 
 package object http {
 
-  implicit def jsonEncoder[F[_]: Applicative, A](implicit
+  implicit def jsonEncoder[F[_]: Applicative, A](
+      implicit
       encoder: Encoder[A]
   ): EntityEncoder[F, A] =
     jsonEncoderOf[F, A]
