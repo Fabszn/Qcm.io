@@ -1,7 +1,7 @@
 package org.qcmio
 
-import io.circe.Decoder
-import io.circe.generic.semiauto.deriveDecoder
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
 object model {
 
@@ -17,7 +17,6 @@ object model {
   )
 
   object Question {
-
     final case class Id(value: Long)      extends AnyVal
     final case class Label(value: String) extends AnyVal
     object Label{

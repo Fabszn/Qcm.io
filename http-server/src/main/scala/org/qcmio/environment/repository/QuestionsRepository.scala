@@ -24,12 +24,13 @@ object QuestionsRepository {
     import ctx._
 
 
-    override def getQuestion(id: Question.Id) = run(quote(questionTable.filter(_.id == lift(id)))).transact(xa).map(_.headOption)
+    def getQuestion(id: Question.Id): Task[Option[Question]] =
+      run(quote(questionTable.filter(_.id == lift(id)))).transact(xa).map(_.headOption)
 
     def saveQuestion(label: Question.Label): Task[Long] =
       run(quote(nextId)).transact(xa) >>= save(label)
 
-    private def save(label:Question.Label)(id:Question.Id) =
+    private def save(label:Question.Label)(id:Question.Id): Task[Long] =
       run(quote {
         questionTable.insert(lift(Question(id, label)))
       }).transact(xa)
