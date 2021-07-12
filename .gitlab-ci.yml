@@ -19,10 +19,9 @@ cache:
     - "cs"
 
 before_script:
-  - 'cd $CI_PROJECT_DIR'
+  - 'export PATH="/root/.local/share/coursier/bin:$PATH"'
   - 'if [ ! -f "./cs" ]; then curl -fLo ./cs https://git.io/coursier-cli-linux; chmod +x ./cs; fi'
-  - ./cs install sbt
-  - 'eval "$(./cs install --env)"'
+  - ./cs install --update sbt
   - 'echo "-J-Dsbt.rootdir=true" > ~/.sbtopts'
   
   # Log the sbt version
