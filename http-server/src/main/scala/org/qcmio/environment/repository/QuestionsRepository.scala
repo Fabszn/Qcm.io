@@ -1,15 +1,15 @@
 package org.qcmio.environment.repository
 
 import org.qcmio.model.Question
-import zio.{Task, URLayer, ZLayer}
+import zio.{Task, URLayer, ZLayer, ZManaged}
 import doobie.Transactor
 import doobie.implicits._
 import zio.interop.catz._
 
 object QuestionsRepository {
 
-  val live: URLayer[DbTransactor, QuestionRepository] = ZLayer.fromService { resource: DbTransactor.Resource =>
-    QuestionsRepository(resource.xa)
+  val live: URLayer[DbTransactor, QuestionRepository] = ZLayer.fromService{ resource: DbTransactor.Resource =>
+    resource.xa.use(transactot => QuestionsRepository(transactot))
   }
 
   trait Service {
