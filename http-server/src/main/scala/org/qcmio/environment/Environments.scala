@@ -10,7 +10,7 @@ object Environments {
 
   type HttpEnvironment = Configuration with Clock
 
-  type AppEnvironment = HttpEnvironment with QuestionRepository
+  type AppEnvironment = HttpEnvironment with QuestionRepository with Blocking
 
   val httpServerEnvironment: ULayer[HttpEnvironment] =
     Configuration.live ++ Clock.live
