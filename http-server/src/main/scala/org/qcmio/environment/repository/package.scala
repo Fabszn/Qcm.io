@@ -3,6 +3,7 @@ package org.qcmio.environment
 import cats.effect
 import cats.effect.Blocker
 import doobie.hikari.HikariTransactor
+import org.qcmio.environment.config.Configuration.getDbConf
 import org.qcmio.environment.config.Configuration
 import org.qcmio.model.Question
 import zio._
@@ -24,33 +25,34 @@ package object repository {
 
   object DbTransactor {
 
-    val postgres: URLayer[Has[Configuration.DbConf], DbTransactor] =
-      ZLayer.fromService(
-        conf =>
+    val postgres: ZLayer[Configuration with Blocking, Nothing, DbTransactor] = {
 
-          val t: ZManaged[Blocking, Nothing, Resource] = ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
-          for {
-            blockingEC <- Managed.succeed(
-              rt.environment
-                .get[Blocking.Service]
-                .blockingExecutor
-                .asEC
-            )
-            connectEC = rt.platform.executor.asEC
-            managed = new Resource {
-              val xa: effect.Resource[Task, HikariTransactor[Task]] = HikariTransactor.newHikariTransactor[Task](
-                conf.driver,
-                conf.url,
-                conf.user,
-                conf.password,
-                connectEC,
-                Blocker.liftExecutionContext(blockingEC)
+      ZLayer.fromManaged(
+      ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
+            for {
+              blockingEC <- Managed.succeed(
+                rt.environment
+                  .get[Blocking.Service]
+                  .blockingExecutor
+                  .asEC
               )
-            }
-          } yield managed
+              connectEC = rt.platform.executor.asEC
+              conf <- getDbConf.toManaged_
+              managed = new Resource {
+                val xa: effect.Resource[Task, HikariTransactor[Task]] = HikariTransactor.newHikariTransactor[Task](
+                  conf.driver,
+                  conf.url,
+                  conf.user,
+                  conf.password,
+                  connectEC,
+                  Blocker.liftExecutionContext(blockingEC)
+                )
+              }
+            } yield managed
 
-        }
-      )
+          })
+    }
+
 
     trait Resource {
       val xa: effect.Resource[Task, HikariTransactor[Task]]

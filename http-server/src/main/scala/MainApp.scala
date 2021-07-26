@@ -9,6 +9,7 @@ import org.qcmio.environment.config.Configuration.HttpConf
 import org.qcmio.environment.http.QuestionsEndpoint
 import org.http4s.implicits._
 import org.http4s.server.Router
+import zio.blocking.Blocking
 import zio.interop.catz._
 import zio.{ExitCode => ZExitCode, _}
 
@@ -39,7 +40,7 @@ object QcmIOApp extends zio.App {
     Router[ServerRIO](rootPath -> routes).orNotFound
 
   }
-  def run(args: List[String]) =
+  def run(args: List[String]): URIO[Configuration with Blocking, ExitCode] =
     program
       .provideLayer(appEnvironment)
       .fold(_ => ZExitCode.failure, _ => ZExitCode.success)
