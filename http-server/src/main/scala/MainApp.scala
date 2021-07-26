@@ -5,7 +5,7 @@ import cats.effect._
 import org.http4s.{HttpRoutes, Request, Response}
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.qcmio.environment.Environments.{AppEnvironment, appEnvironment}
-import org.qcmio.environment.config.Configuration.HttpConf
+import org.qcmio.environment.config.Configuration.{Configuration, HttpConf}
 import org.qcmio.environment.http.QuestionsEndpoint
 import org.http4s.implicits._
 import org.http4s.server.Router
@@ -40,7 +40,7 @@ object QcmIOApp extends zio.App {
     Router[ServerRIO](rootPath -> routes).orNotFound
 
   }
-  def run(args: List[String]): URIO[Configuration with Blocking, ExitCode] =
+  def run(args: List[String]) =
     program
       .provideLayer(appEnvironment)
       .fold(_ => ZExitCode.failure, _ => ZExitCode.success)

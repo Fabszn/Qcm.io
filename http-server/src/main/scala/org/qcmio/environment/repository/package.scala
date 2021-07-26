@@ -3,8 +3,8 @@ package org.qcmio.environment
 import cats.effect
 import cats.effect.Blocker
 import doobie.hikari.HikariTransactor
-import org.qcmio.environment.config.Configuration.getDbConf
 import org.qcmio.environment.config.Configuration
+import org.qcmio.environment.config.Configuration.getDbConf
 import org.qcmio.model.Question
 import zio._
 import zio.blocking.Blocking
@@ -28,29 +28,28 @@ package object repository {
     val postgres: ZLayer[Configuration with Blocking, Nothing, DbTransactor] = {
 
       ZLayer.fromManaged(
-      ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
-            for {
-              blockingEC <- Managed.succeed(
-                rt.environment
-                  .get[Blocking.Service]
-                  .blockingExecutor
-                  .asEC
+        ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
+          for {
+            blockingEC <- Managed.succeed(
+              rt.environment
+                .get[Blocking.Service]
+                .blockingExecutor
+                .asEC
+            )
+            connectEC = rt.platform.executor.asEC
+            conf <- getDbConf.toManaged_
+            managed = new Resource {
+              val xa: effect.Resource[Task, HikariTransactor[Task]] = HikariTransactor.newHikariTransactor[Task](
+                conf.driver,
+                conf.url,
+                conf.user,
+                conf.password,
+                connectEC,
+                Blocker.liftExecutionContext(blockingEC)
               )
-              connectEC = rt.platform.executor.asEC
-              conf <- getDbConf.toManaged_
-              managed = new Resource {
-                val xa: effect.Resource[Task, HikariTransactor[Task]] = HikariTransactor.newHikariTransactor[Task](
-                  conf.driver,
-                  conf.url,
-                  conf.user,
-                  conf.password,
-                  connectEC,
-                  Blocker.liftExecutionContext(blockingEC)
-                )
-              }
-            } yield managed
-
-          })
+            }
+          } yield managed
+        })
     }
 
 
