@@ -10,15 +10,15 @@ object Environments {
 
   type HttpEnvironment = Configuration with Clock
 
-  type AppEnvironment = HttpEnvironment with QuestionRepository with Blocking
+  type AppEnvironment = HttpEnvironment with QuestionRepository
 
   val httpServerEnvironment: ULayer[HttpEnvironment] =
     Configuration.live ++ Clock.live
   val dbTransactor: URLayer[Configuration with Blocking, DbTransactor] =
     DbTransactor.postgres
-  val questionRepository: URLayer[Configuration with Blocking, QuestionRepository with Blocking] =
-    dbTransactor >>> QuestionsRepository.live ++ Blocking.live
-  val appEnvironment: URLayer[Configuration with Blocking, HttpEnvironment with QuestionRepository with Blocking] =
-    httpServerEnvironment ++ questionRepository
+  val questionRepository: URLayer[Configuration with Blocking, QuestionRepository] =
+    dbTransactor >>> QuestionsRepository.live
+  val appEnvironment: URLayer[Configuration with Blocking, HttpEnvironment with QuestionRepository] =
+   httpServerEnvironment ++ questionRepository
 
 }
