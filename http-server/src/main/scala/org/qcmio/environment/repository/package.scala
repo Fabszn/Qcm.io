@@ -1,5 +1,6 @@
 package org.qcmio.environment
 
+import cats.effect
 import cats.effect.Blocker
 import doobie.hikari.HikariTransactor
 import org.qcmio.environment.config.Configuration
@@ -10,7 +11,7 @@ import zio.interop.catz._
 
 package object repository {
 
-  type DbTransactor       = Has[DbTransactor.Resource]
+  type DbTransactor = Has[DbTransactor.Resource]
   type QuestionRepository = Has[QuestionsRepository.Service]
 
   object question {
@@ -20,37 +21,39 @@ package object repository {
     def getQuestion(id: Question.Id): RIO[QuestionRepository with Blocking, Option[Question]] =
       RIO.accessM(_.get.getQuestion(id))
   }
+
   object DbTransactor {
 
     val postgres: URLayer[Has[Configuration.DbConf], DbTransactor] =
       ZLayer.fromService(
         conf =>
-          new Resource {
-              val xa: ZManaged[Blocking, Throwable, HikariTransactor[Task]] =
-                ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
-                  for {
-                    blockingEC <- Managed.succeed(
-                      rt.environment
-                        .get[Blocking.Service]
-                        .blockingExecutor
-                        .asEC
-                    )
-                    connectEC = rt.platform.executor.asEC
-                    managed <- HikariTransactor.newHikariTransactor[Task](
-                      conf.driver,
-                      conf.url,
-                      conf.user,
-                      conf.password,
-                      connectEC,
-                      Blocker.liftExecutionContext(blockingEC)
-                    ).toManaged
-                  } yield managed
-                }
-          }
+
+          val t: ZManaged[Blocking, Nothing, Resource] = ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
+          for {
+            blockingEC <- Managed.succeed(
+              rt.environment
+                .get[Blocking.Service]
+                .blockingExecutor
+                .asEC
+            )
+            connectEC = rt.platform.executor.asEC
+            managed = new Resource {
+              val xa: effect.Resource[Task, HikariTransactor[Task]] = HikariTransactor.newHikariTransactor[Task](
+                conf.driver,
+                conf.url,
+                conf.user,
+                conf.password,
+                connectEC,
+                Blocker.liftExecutionContext(blockingEC)
+              )
+            }
+          } yield managed
+
+        }
       )
 
     trait Resource {
-      val xa:ZManaged[Blocking, Throwable, HikariTransactor[Task]]
+      val xa: effect.Resource[Task, HikariTransactor[Task]]
     }
   }
 }
