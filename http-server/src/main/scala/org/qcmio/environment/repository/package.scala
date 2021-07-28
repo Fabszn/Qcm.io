@@ -25,7 +25,7 @@ package object repository {
 
   object DbTransactor {
 
-    val postgres: ZLayer[Configuration with Blocking, Nothing, DbTransactor] = {
+    val postgres: URLayer[Configuration with Blocking, DbTransactor] = {
 
       ZLayer.fromManaged(
         ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
@@ -51,7 +51,6 @@ package object repository {
           } yield managed
         })
     }
-
 
     trait Resource {
       val xa: effect.Resource[Task, HikariTransactor[Task]]
