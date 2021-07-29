@@ -1,24 +1,23 @@
 package org.qcmio.environment
 
+import org.qcmio.environment.Environments.questionRepository
 import org.qcmio.environment.config.Configuration
 import org.qcmio.environment.repository.{DbTransactor, QuestionRepository, QuestionsRepository}
-import zio.{ULayer, ZLayer}
+import zio.{ULayer, URLayer, ZLayer}
 import zio.blocking.Blocking
 import zio.clock.Clock
 
 object Environments {
 
-  type HttpEnvironment = Configuration with Clock
+  type HttpServerEnvironment = Configuration with Clock
+  type AppEnvironment = Configuration with Clock with QuestionRepository
 
-  type AppEnvironment = HttpEnvironment with QuestionRepository with Blocking
-
-  val httpServerEnvironment: ULayer[HttpEnvironment] =
-    Configuration.live ++ Clock.live
+  val httpServerEnvironment: ULayer[HttpServerEnvironment] = Configuration.live ++ Clock.live
   val dbTransactor: ULayer[DbTransactor] =
-    Configuration.live >>> DbTransactor.postgres
-  val questionRepository: ULayer[QuestionRepository with Blocking] =
-    dbTransactor >>> QuestionsRepository.live ++ Blocking.live
+  Configuration.live ++ Blocking.live >>> DbTransactor.postgres
+  val questionRepository: ULayer[QuestionRepository] =
+    dbTransactor >>> QuestionsRepository.live
   val appEnvironment: ULayer[AppEnvironment] =
-    httpServerEnvironment ++ questionRepository
+    questionRepository ++ httpServerEnvironment
 
 }

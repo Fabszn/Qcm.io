@@ -1,7 +1,7 @@
 package org.qcmio.environment.config
 
 import pureconfig.ConfigSource
-import zio.{Has, ULayer, ZIO, ZLayer}
+import zio.{Has, UIO, ULayer, URIO, ZIO, ZLayer}
 import pureconfig.generic.auto._
 
 object Configuration {
@@ -23,5 +23,7 @@ object Configuration {
       .map(c => Has(c.httpServer) ++ Has(c.database))
       .orDie
   )
+
+  def getDbConf:URIO[Configuration,DbConf] = ZIO.access(_.get[DbConf])
 
 }
