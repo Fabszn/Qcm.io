@@ -16,10 +16,10 @@ package object repository {
   type QuestionRepository = Has[QuestionsRepository.Service]
 
   object question {
-    def saveQuestion(q: Question.Label): RIO[QuestionRepository with Blocking, Long] =
+    def saveQuestion(q: Question.Label): RIO[QuestionRepository, Long] =
       RIO.accessM(_.get.saveQuestion(q))
 
-    def getQuestion(id: Question.Id): RIO[QuestionRepository with Blocking, Option[Question]] =
+    def getQuestion(id: Question.Id): RIO[QuestionRepository, Option[Question]] =
       RIO.accessM(_.get.getQuestion(id))
   }
 

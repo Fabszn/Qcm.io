@@ -9,15 +9,15 @@ import zio.clock.Clock
 
 object Environments {
 
-  //type HttpEnvironment =
-
+  type HttpServerEnvironment = Configuration with Clock
   type AppEnvironment = Configuration with Clock with QuestionRepository
 
-  val dbTransactor: URLayer[Configuration with Blocking, DbTransactor] =
-    DbTransactor.postgres
-  val questionRepository: URLayer[Configuration with Blocking, QuestionRepository] =
+  val httpServerEnvironment: ULayer[HttpServerEnvironment] = Configuration.live ++ Clock.live
+  val dbTransactor: ULayer[DbTransactor] =
+  Configuration.live ++ Blocking.live >>> DbTransactor.postgres
+  val questionRepository: ULayer[QuestionRepository] =
     dbTransactor >>> QuestionsRepository.live
   val appEnvironment: ULayer[AppEnvironment] =
-    (Configuration.live ++ Blocking.live)  >>> questionRepository ++ Configuration.live ++ Clock.live
+    questionRepository ++ httpServerEnvironment
 
 }

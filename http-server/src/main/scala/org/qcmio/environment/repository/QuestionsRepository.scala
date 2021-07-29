@@ -15,21 +15,21 @@ object QuestionsRepository {
   trait Service {
     val resource: DbTransactor.Resource
 
-    def saveQuestion(label: Question.Label):RIO[Blocking, Long]
-    def getQuestion(id:Question.Id):RIO[Blocking, Option[Question]]
+    def saveQuestion(label: Question.Label):Task[Long]
+    def getQuestion(id:Question.Id):Task[Option[Question]]
   }
 
   private[repository] final case class QuestionsRepository(resource: DbTransactor.Resource) extends Service with DBContext {
 
     import ctx._
 
-    def getQuestion(id: Question.Id): RIO[Blocking, Option[Question]] = {
+    def getQuestion(id: Question.Id): Task[Option[Question]] = {
       resource.xa.use { xa =>
         run(quote(questionTable.filter(_.id == lift(id)))).transact(xa).map(_.headOption)
       }
     }
 
-    def saveQuestion(label: Question.Label): RIO[Blocking, Long] =
+    def saveQuestion(label: Question.Label): Task[Long] =
       resource.xa.use { implicit xa: Transactor[Task] =>
         run(quote(nextId)).transact(xa) >>= save(label)
       }

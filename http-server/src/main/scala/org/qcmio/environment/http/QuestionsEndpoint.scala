@@ -9,13 +9,12 @@ import org.http4s.server.Router
 import org.qcmio.environment.repository.{QuestionRepository, question}
 import org.qcmio.model.Question
 import zio.RIO
-import zio.blocking.Blocking
 import zio.interop.catz._
 
 import scala.util.Try
 
 
-final class QuestionsEndpoint[R <: QuestionRepository with Blocking] {
+final class QuestionsEndpoint[R <: QuestionRepository] {
 
   type QuestionTask[A] = RIO[R, A]
 

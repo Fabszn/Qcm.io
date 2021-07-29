@@ -35,9 +35,9 @@ object QcmIOApp extends zio.App {
   def initRoutes(
       rootPath: String
   ): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
-    val questionEndpoint = new QuestionsEndpoint[AppEnvironment with Blocking]
+    val questionEndpoint = new QuestionsEndpoint[AppEnvironment]
 
-    val routes: HttpRoutes[questionEndpoint.QuestionTask] = questionEndpoint.routes
+    val routes = questionEndpoint.routes
     Router[ServerRIO](rootPath -> routes).orNotFound
 
   }
