@@ -35,14 +35,14 @@ object QcmIOApp extends zio.App {
   def initRoutes(
       rootPath: String
   ): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
-    val questionEndpoint = new QuestionsEndpoint[ZEnv with AppEnvironment]
+    val questionEndpoint = new QuestionsEndpoint[AppEnvironment with Blocking]
 
-    val routes = questionEndpoint.routes
+    val routes: HttpRoutes[questionEndpoint.QuestionTask] = questionEndpoint.routes
     Router[ServerRIO](rootPath -> routes).orNotFound
 
   }
   def run(args: List[String]): URIO[ZEnv, ExitCode] =
     program
-      .provideLayer((ZEnv.live ++ Configuration.live) >>> appEnvironment)
+      .provideSomeLayer(appEnvironment)
       .fold[ExitCode](_ => ExitCode.failure, _ => ExitCode.success)
 }
