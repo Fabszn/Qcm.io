@@ -25,7 +25,7 @@ package object repository {
 
   object DbTransactor {
 
-    val postgres: URLayer[Configuration with Blocking, DbTransactor] = {
+    val postgres: ZLayer[Blocking with Configuration, Throwable, Has[Resource]] = {
 
       ZLayer.fromManaged(
         ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
@@ -38,22 +38,22 @@ package object repository {
             )
             connectEC = rt.platform.executor.asEC
             conf <- getDbConf.toManaged_
-            managed = new Resource {
-              val xa: effect.Resource[Task, HikariTransactor[Task]] = HikariTransactor.newHikariTransactor[Task](
+            trans <- HikariTransactor.newHikariTransactor[Task](
                 conf.driver,
                 conf.url,
                 conf.user,
                 conf.password,
                 connectEC,
                 Blocker.liftExecutionContext(blockingEC)
-              )
-            }
-          } yield managed
+              ).toManaged
+          } yield new Resource {
+            override val xa: HikariTransactor[Task] =trans
+          }
         })
     }
 
     trait Resource {
-      val xa: effect.Resource[Task, HikariTransactor[Task]]
+      val xa: HikariTransactor[Task]
     }
   }
 }
