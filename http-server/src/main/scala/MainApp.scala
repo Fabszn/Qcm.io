@@ -1,7 +1,7 @@
 package http.server
 
 import cats.data.Kleisli
-import cats.effect._
+import cats.effect.{ExitCode => CatsExitCode}
 import org.http4s.{HttpRoutes, Request, Response}
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.qcmio.environment.Environments.{AppEnvironment, appEnvironment}
@@ -9,8 +9,10 @@ import org.qcmio.environment.config.Configuration.HttpConf
 import org.qcmio.environment.http.QuestionsEndpoint
 import org.http4s.implicits._
 import org.http4s.server.Router
+import org.qcmio.environment.config.Configuration
+import zio.blocking.Blocking
 import zio.interop.catz._
-import zio.{ExitCode => ZExitCode, _}
+import zio._
 
 object QcmIOApp extends zio.App {
 
@@ -25,7 +27,7 @@ object QcmIOApp extends zio.App {
                      .bindHttp(conf.port, conf.host)
                      .withHttpApp(initRoutes("qcm"))
                      .serve
-                     .compile[ServerRIO, ServerRIO, ExitCode]
+                     .compile[ServerRIO, ServerRIO, CatsExitCode]
                      .drain
                  }
     } yield server
@@ -39,8 +41,8 @@ object QcmIOApp extends zio.App {
     Router[ServerRIO](rootPath -> routes).orNotFound
 
   }
-  def run(args: List[String]) =
+  def run(args: List[String]): URIO[ZEnv, ExitCode] =
     program
-      .provideLayer(appEnvironment)
-      .fold(_ => ZExitCode.failure, _ => ZExitCode.success)
+      .provideSomeLayer(appEnvironment)
+      .fold[ExitCode](_ => ExitCode.failure, _ => ExitCode.success)
 }

@@ -1,42 +1,59 @@
 package org.qcmio.environment
 
+import cats.effect
+import cats.effect.Blocker
+import doobie.hikari.HikariTransactor
 import org.qcmio.environment.config.Configuration
-import zio._
-import doobie._
+import org.qcmio.environment.config.Configuration.getDbConf
 import org.qcmio.model.Question
+import zio._
+import zio.blocking.Blocking
 import zio.interop.catz._
 
 package object repository {
 
-  type DbTransactor       = Has[DbTransactor.Resource]
+  type DbTransactor = Has[DbTransactor.Resource]
   type QuestionRepository = Has[QuestionsRepository.Service]
-
 
   object question {
     def saveQuestion(q: Question.Label): RIO[QuestionRepository, Long] =
       RIO.accessM(_.get.saveQuestion(q))
 
-    def getQuestion(id:Question.Id) : RIO[QuestionRepository,Option[Question]] =
+    def getQuestion(id: Question.Id): RIO[QuestionRepository, Option[Question]] =
       RIO.accessM(_.get.getQuestion(id))
   }
+
   object DbTransactor {
 
-    val postgres: URLayer[Has[Configuration.DbConf], DbTransactor] =
-      ZLayer.fromService(
-        conf =>
-          new Resource {
-            override val xa: Transactor[Task] = Transactor.fromDriverManager(
-              conf.driver,
-              conf.url,
-              conf.user,
-              conf.password
+    val postgres: ZLayer[Blocking with Configuration, Throwable, Has[Resource]] = {
+
+      ZLayer.fromManaged(
+        ZIO.runtime[Blocking].toManaged_.flatMap { implicit rt =>
+          for {
+            blockingEC <- Managed.succeed(
+              rt.environment
+                .get[Blocking.Service]
+                .blockingExecutor
+                .asEC
             )
+            connectEC = rt.platform.executor.asEC
+            conf <- getDbConf.toManaged_
+            trans <- HikariTransactor.newHikariTransactor[Task](
+                conf.driver,
+                conf.url,
+                conf.user,
+                conf.password,
+                connectEC,
+                Blocker.liftExecutionContext(blockingEC)
+              ).toManaged
+          } yield new Resource {
+            override val xa: HikariTransactor[Task] =trans
           }
-      )
+        })
+    }
 
     trait Resource {
-      val xa: Transactor[Task]
+      val xa: HikariTransactor[Task]
     }
   }
-
 }
