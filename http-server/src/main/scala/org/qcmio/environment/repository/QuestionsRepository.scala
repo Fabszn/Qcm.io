@@ -3,7 +3,7 @@ package org.qcmio.environment.repository
 import doobie.implicits._
 import org.qcmio.model.Question
 import zio.interop.catz._
-import zio.{Task, URLayer, ZLayer}
+import zio.{RIO, Task, URLayer, ZLayer}
 
 object QuestionsRepository {
 
@@ -17,6 +17,17 @@ object QuestionsRepository {
     def saveQuestion(label: Question.Label): Task[Long]
 
     def getQuestion(id: Question.Id): Task[Option[Question]]
+
+    def updateQuestion(id: Question.Id, label: Question.Label): Task[Long]
+  }
+
+  object question {
+    def saveQuestion(q: Question.Label): RIO[QuestionRepository, Long] =
+      RIO.accessM(_.get.saveQuestion(q))
+    def getQuestion(id: Question.Id): RIO[QuestionRepository, Option[Question]] =
+      RIO.accessM(_.get.getQuestion(id))
+    def updateQuestion(id: Question.Id, label:Question.Label): RIO[QuestionRepository, Long] =
+      RIO.accessM(_.get.updateQuestion(id, label))
   }
 
   private[repository] final case class QuestionsRepository(resource: DbTransactor.Resource) extends Service with DBContext {
@@ -27,6 +38,10 @@ object QuestionsRepository {
     def getQuestion(id: Question.Id): Task[Option[Question]] = {
       run(quote(questionTable.filter(_.id == lift(id)))).transact(xa).map(_.headOption)
     }
+
+
+    override def updateQuestion(id: Question.Id, label: Question.Label): Task[Long] =
+      run(quote(questionTable.filter(q => q.id == lift(id)).update(_.label -> lift(label)))).transact(xa)
 
     def saveQuestion(label: Question.Label): Task[Long] =
       run(quote(nextId)).transact(xa) >>= save(label)

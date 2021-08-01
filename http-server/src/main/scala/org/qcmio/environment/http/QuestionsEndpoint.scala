@@ -6,7 +6,8 @@ import org.http4s.HttpRoutes
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
-import org.qcmio.environment.repository.{QuestionRepository, question}
+import org.qcmio.environment.repository.QuestionRepository
+import org.qcmio.environment.repository.QuestionsRepository.question
 import org.qcmio.model.Question
 import zio.RIO
 import zio.interop.catz._
@@ -43,6 +44,12 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
       for {
         lbl <- req.as[Question.Label]
         res <- question.saveQuestion(lbl)
+        json <- Created(res.asJson)
+      } yield json
+    case req@PUT -> Root / QuestionIdVar(id) =>
+      for {
+        lbl <- req.as[Question.Label]
+        res <- question.updateQuestion(id,lbl)
         json <- Created(res.asJson)
       } yield json
   }
