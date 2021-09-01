@@ -1,4 +1,5 @@
 import Dependencies._
+
 version := "1.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.13.6"
@@ -14,6 +15,13 @@ lazy val db = (project in file("db"))
     flywayPassword := "qcmiopwd",
     flywayLocations += "db/migration"
   )
+
+lazy val front = (project in file("frontEnd")).enablePlugins(ScalaJSPlugin)
+  .settings(libraryDependencies ++= Seq("org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
+    "com.raquo" %%% "laminar" % Version.laminar)
+  ,// This is an application with a main method
+    scalaJSUseMainModuleInitializer := true)
+
 
 lazy val httpServer = (project in file("http-server"))
   .enablePlugins(JavaAppPackaging, DockerPlugin, DockerComposePlugin)

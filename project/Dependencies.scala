@@ -3,6 +3,8 @@ import sbt._
 
 object Dependencies {
 
+
+
   object Version {
     lazy val zioVersion = "1.0.4-2"
     lazy val `zio-interop` = "2.3.1.0"
@@ -10,6 +12,8 @@ object Dependencies {
     lazy val quill = "3.6.1"
     lazy val doobieVersion = "0.12.1"
     lazy val circe = "0.13.0"
+    lazy val scalaJsDom = "1.1.0"
+    lazy val laminar = "0.13.1"
   }
 
   lazy val doobie = Seq(
@@ -37,5 +41,6 @@ object Dependencies {
   lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.14.1"
 
   val quillJdbc = "io.getquill" %% "quill-jdbc" % Version.quill
+
 
 }
