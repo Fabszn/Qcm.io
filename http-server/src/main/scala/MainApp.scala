@@ -2,15 +2,15 @@ package http.server
 
 import cats.data.Kleisli
 import cats.effect.{ExitCode => CatsExitCode}
-import org.http4s.{HttpRoutes, Request, Response}
+import org.http4s.{Request, Response}
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.qcmio.environment.Environments.{AppEnvironment, appEnvironment}
 import org.qcmio.environment.config.Configuration.HttpConf
-import org.qcmio.environment.http.QuestionsEndpoint
+import org.qcmio.environment.http._
 import org.http4s.implicits._
 import org.http4s.server.Router
-import org.qcmio.environment.config.Configuration
-import zio.blocking.Blocking
+import cats.implicits._
+
 import zio.interop.catz._
 import zio._
 
@@ -35,9 +35,10 @@ object QcmIOApp extends zio.App {
   def initRoutes(
       rootPath: String
   ): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
-    val questionEndpoint = new QuestionsEndpoint[AppEnvironment]
+    val questionEndpoint = new QuestionsEndpoint[AppEnvironment].routes
+    val adminEndpoint = new AdminEndpoint[AppEnvironment].routes
 
-    val routes = questionEndpoint.routes
+    val routes = adminEndpoint <+> questionEndpoint
     Router[ServerRIO](rootPath -> routes).orNotFound
 
   }

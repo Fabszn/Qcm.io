@@ -1,3 +1,4 @@
+import com.raquo.airstream.web.AjaxEventStream
 import com.raquo.laminar.api.L._
 import org.scalajs.dom
 
@@ -13,6 +14,9 @@ object Main {
     val stateVar = Var(LoginState())
 
     val submitter = Observer[LoginState] { state =>
+
+      AjaxEventStream
+        .get("http://localhost:8080")
 
       dom.window.alert(s"Login: ${state.login}; pwd: ${state.mdp}")
     }

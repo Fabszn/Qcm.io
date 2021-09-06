@@ -19,6 +19,7 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
 
   type QuestionTask[A] = RIO[R, A]
 
+
   val dsl = Http4sDsl[QuestionTask]
 
   import dsl._
