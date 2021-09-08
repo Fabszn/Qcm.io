@@ -14,6 +14,7 @@ object Dependencies {
     lazy val circe = "0.13.0"
     lazy val scalaJsDom = "1.1.0"
     lazy val laminar = "0.13.1"
+    lazy val scalaCss = "0.8.0-RC1"
   }
 
   lazy val doobie = Seq(
@@ -30,6 +31,8 @@ object Dependencies {
     "io.circe" %% "circe-generic" % Version.circe,
     "io.circe" %% "circe-parser" % Version.circe
   )
+
+
 
   lazy val zio = "dev.zio" %% "zio" % zioVersion
   lazy val http4sBlazeServer =

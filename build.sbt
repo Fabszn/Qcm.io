@@ -10,20 +10,23 @@ lazy val db = (project in file("db"))
   .enablePlugins(FlywayPlugin)
   .settings(
     libraryDependencies += "org.postgresql" % "postgresql" % "42.1.1",
-    flywayUrl := "jdbc:postgresql://localhost/qcmio",
-    flywayUser := "qcmio",
-    flywayPassword := "qcmiopwd",
+    flywayUrl                               := "jdbc:postgresql://localhost/qcmio",
+    flywayUser                              := "qcmio",
+    flywayPassword                          := "qcmiopwd",
     flywayLocations += "db/migration"
   )
 
-lazy val front = (project in file("frontEnd")).enablePlugins(ScalaJSPlugin)
-  .settings(libraryDependencies ++= Seq("org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
-    "com.raquo" %%% "laminar" % Version.laminar)
-  ,// This is an application with a main method
-    scalaJSUseMainModuleInitializer := true)
+lazy val front = (project in file("frontEnd"))
+  .enablePlugins(ScalaJSPlugin)
+  .settings(
+    libraryDependencies ++= Seq("org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
+      "com.raquo" %%% "laminar" % Version.laminar,
+      "com.github.japgolly.scalacss" %%% "core" % Version.scalaCss
+    ), // This is an application with a main method
+    scalaJSUseMainModuleInitializer := true
+  )
 
-
-lazy val httpServer = (project in file("http-server"))
+lazy val http = (project in file("http-server"))
   .enablePlugins(JavaAppPackaging, DockerPlugin, DockerComposePlugin)
   .settings(
     libraryDependencies ++= circle,
