@@ -9,6 +9,5 @@ Objectif :
     [] Step 4 : Mise en place l'authentification sur l'API
 
 
-docker DB
 
-docker run  -p 5432:5432 -e POSTGRES_PASSWORD=qcmiopwd -e POSTGRES_USER=qcmio postgres:10-alpine postgres -c 'max_connections=200' -c 'log_statement=all' -c 'log_line_prefix=%t[%a][%p]'
+

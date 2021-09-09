@@ -4,13 +4,19 @@ import com.raquo.airstream.web.AjaxEventStream
 import com.raquo.airstream.web.AjaxEventStream.AjaxStreamError
 import com.raquo.laminar.api.L._
 import org.scalajs.dom
+import scalacss.internal.mutable.GlobalRegistry
+
 
 object Main {
 
   def main(args: Array[String]): Unit = {
 
+
+    val CssSettings = scalacss.devOrProdDefaults
+    import CssSettings._
+
     GlobalRegistry.addToDocumentOnRegistration()
-    GlobalRegistry.register(HelloWorldStyles)
+    GlobalRegistry.register(QcmIoCss)
 
     lazy val container = dom.document.getElementById("app-container")
 
@@ -33,7 +39,7 @@ object Main {
     val pwdWriter = stateVar.updater[String]((state, pass) => state.copy(mdp = pass))
 
     val app = div(
-      p(label("server Answer"),input(value <-- eventsVar.signal.map(_.mkString(",")))),
+      p(label("server Answer"),cls:=QcmIoCss.myStyles.className.value,input(value <-- eventsVar.signal.map(_.mkString(",")))),
       renderInputRow(
         label("Login: "),
         input(
