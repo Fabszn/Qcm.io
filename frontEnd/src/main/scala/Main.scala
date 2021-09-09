@@ -39,6 +39,7 @@ object Main {
     val pwdWriter = stateVar.updater[String]((state, pass) => state.copy(mdp = pass))
 
     val app = div(
+      cls := QcmIoCss.loginForm.className.value,
       p(label("server Answer"),cls:=QcmIoCss.myStyles.className.value,input(value <-- eventsVar.signal.map(_.mkString(",")))),
       renderInputRow(
         label("Login: "),
