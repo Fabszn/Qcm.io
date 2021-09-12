@@ -21,8 +21,10 @@ lazy val front = (project in file("frontEnd"))
   .settings(
     libraryDependencies ++= Seq("org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
       "com.raquo" %%% "laminar" % Version.laminar,
-      "com.github.japgolly.scalacss" %%% "core" % Version.scalaCss
-    ), // This is an application with a main method
+      "com.github.japgolly.scalacss" %%% "core" % Version.scalaCss,
+      "com.raquo" %%% "waypoint" % Version.waypoint,
+      "com.lihaoyi" %%% "upickle" % Version.upickle,
+    ),
     scalaJSUseMainModuleInitializer := true
   )
 

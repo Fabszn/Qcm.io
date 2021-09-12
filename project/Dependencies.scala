@@ -15,6 +15,8 @@ object Dependencies {
     lazy val scalaJsDom = "1.1.0"
     lazy val laminar = "0.13.1"
     lazy val scalaCss = "0.8.0-RC1"
+    lazy val waypoint = "0.4.2"
+    lazy val upickle = "1.3.13"
   }
 
   lazy val doobie = Seq(
