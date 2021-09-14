@@ -1,10 +1,9 @@
 package org.qcmio.front
 
-import com.raquo.airstream.core.Signal
 import com.raquo.laminar.api.L._
+import com.raquo.laminar.nodes.ReactiveHtmlElement
 import com.raquo.waypoint._
 import upickle.default._
-import org.scalajs.dom
 import org.scalajs.dom.html.Div
 
 
@@ -31,18 +30,17 @@ object QcmioRouter {
     serializePage = page => write(page)(rw), // serialize page data for storage in History API log
     deserializePage = pageStr => read(pageStr)(rw) // deserialize the above
   )(
-    $popStateEvent = L.windowEvents.onPopState, // this is how Waypoint avoids an explicit dependency on Laminar
-    owner = L.unsafeWindowOwner // this router will live as long as the window
+    $popStateEvent = windowEvents.onPopState, // this is how Waypoint avoids an explicit dependency on Laminar
+    owner = unsafeWindowOwner // this router will live as long as the window
   )
 
   val splitter = SplitRender[Page, HtmlElement](router.$currentPage)
-    .collectSignal[MainPage] { $userPage => renderMainPage($userPage) }
+    .collectSignal[MainPage] { _=> renderMainPage() }
     .collectStatic(LoginPage) { div("Login page") }
 
-  def renderMainPage($userPage: Signal[MainPage]): Div = {
+  def renderMainPage(): ReactiveHtmlElement[Div] = {
     div(
-      "User page ",
-      child.text <-- $userPage.map(user => user.userId)
+      "User page "
     )
   }
 
