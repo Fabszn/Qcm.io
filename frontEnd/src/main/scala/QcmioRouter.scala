@@ -36,7 +36,7 @@ object QcmioRouter {
 
   val splitter = SplitRender[Page, HtmlElement](router.$currentPage)
     .collectSignal[MainPage] { _=> renderMainPage() }
-    .collectStatic(LoginPage) { div("Login page") }
+    .collectStatic(LoginPage) { Pages.loginPage }
 
   def renderMainPage(): ReactiveHtmlElement[Div] = {
     div(

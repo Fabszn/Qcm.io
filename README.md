@@ -8,6 +8,6 @@ Objectif :
         - [X] 3.3 : Construire la requête pour la servir derrière le end-point
     [] Step 4 : Mise en place l'authentification sur l'API
 
-
+ add yarn vite tools (for front purpose)
 
 

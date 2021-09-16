@@ -18,6 +18,8 @@ object Main {
     GlobalRegistry.addToDocumentOnRegistration()
     GlobalRegistry.register(QcmIoCss)
 
+    val clickObserver = Observer[dom.MouseEvent](onNext = _ => QcmioRouter.router.pushState(LoginPage))
+
     lazy val container = dom.document.getElementById("app-container")
 
     val app: Div = div(
@@ -25,18 +27,12 @@ object Main {
       p(
         button(
           "Submit",
-          inContext(thisNode => {
-            val $click = thisNode.events(onClick)
-            $click.flatMap { _ =>
-
-              EventStream.fromValue(QcmioRouter.router.pushState(root /"main"/ 1/))
-
-            }
+          onClick --> clickObserver,
            div("Hello Worl")
-          })
+          )
         ),
         child <-- QcmioRouter.splitter.$view
-      ))
+      )
 
     renderOnDomContentLoaded(container, app)
 
