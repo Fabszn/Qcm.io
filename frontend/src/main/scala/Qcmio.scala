@@ -7,7 +7,7 @@ import org.scalajs.dom
 import scalacss.internal.mutable.GlobalRegistry
 
 
-object Main {
+object Qcmio {
 
   def main(args: Array[String]): Unit = {
 

@@ -16,7 +16,7 @@ lazy val db = (project in file("db"))
     flywayLocations += "db/migration"
   )
 
-lazy val front = (project in file("frontEnd"))
+lazy val front = (project in file("frontend"))
   .enablePlugins(ScalaJSPlugin)
   .settings(
     libraryDependencies ++= Seq("org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
