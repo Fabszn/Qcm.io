@@ -6,7 +6,7 @@ const scalaVersion = '2.13'
 
 // https://vitejs.dev/config/
 export default ({mode}) => {
-    const mainJS = `./frontend/target/scala-${scalaVersion}/frontend-${mode === 'production' ? 'opt' : 'fastopt'}/main.js`
+    const mainJS = `main.js`
     const script = `<script type="module" src="${mainJS}"></script>`
 
     return {

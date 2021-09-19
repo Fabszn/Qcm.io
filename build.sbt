@@ -25,6 +25,8 @@ lazy val front = (project in file("frontend"))
       "com.raquo" %%% "waypoint" % Version.waypoint,
       "com.lihaoyi" %%% "upickle" % Version.upickle,
     ),
+    skip in packageJSDependencies := false,
+    jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
     scalaJSUseMainModuleInitializer := true
   )
 
@@ -41,7 +43,19 @@ lazy val http = (project in file("http-server"))
       `zio-interop-cats`,
       logback,
       pureConfig
-    )
+    ),
+    // Allows to read the generated JS on client
+    resources in Compile += (fastOptJS in (front, Compile)).value.data,
+    // Lets the backend to read the .map file for js
+    resources in Compile += (fastOptJS in (front, Compile)).value
+      .map((x: sbt.File) => new File(x.getAbsolutePath + ".map"))
+      .data,
+    // Lets the server read the jsdeps file
+    (managedResources in Compile) += (artifactPath in (front, Compile)).value,
+    // do a fastOptJS on reStart
+    reStart := (reStart dependsOn (fastOptJS in (front, Compile))).evaluated,
+    // This settings makes reStart to rebuild if a scala.js file changes on the client
+    watchSources ++= (watchSources in front).value,
   )
   .dependsOn(model)
 

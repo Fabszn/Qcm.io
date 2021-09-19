@@ -7,7 +7,7 @@ import org.scalajs.dom
 import scalacss.internal.mutable.GlobalRegistry
 
 
-object Qcmio {
+object QcmioMain {
 
   def main(args: Array[String]): Unit = {
 
@@ -21,8 +21,9 @@ object Qcmio {
     val clickObserver = Observer[dom.MouseEvent](onNext = _ => QcmioRouter.router.pushState(LoginPage))
 
     lazy val container = dom.document.getElementById("app-container")
-
+val test  = html(body("Hello World"))
     val app: Div = div(
+      test,
       h1("Routing App"),
       p(
         button(
