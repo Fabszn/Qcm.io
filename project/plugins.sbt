@@ -6,4 +6,5 @@ addSbtPlugin("ch.epfl.scala" % "sbt-missinglink" % "0.3.2")
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.7.0")
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
-addSbtPlugin("org.scala-js" % "sbt-jsdependencies" % "1.0.2")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.21.0-RC1")
+addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.2.0")
