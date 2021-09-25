@@ -1,6 +1,6 @@
 import Dependencies._
 
-version := "1.0-SNAPSHOT"
+version := "1.0"
 
 
 
@@ -19,7 +19,7 @@ lazy val db = (project in file("db"))
   )
 
 lazy val front = (project in file("frontend"))
-  .enablePlugins(ScalaJSBundlerPlugin,ScalaJSWeb)
+  .enablePlugins(ScalaJSWebjarPlugin,ScalaJSBundlerPlugin,ScalaJSWeb)
   .settings(
     libraryDependencies ++= Seq("org.scala-js" %%% "scalajs-dom" % Version.scalaJsDom,
       "com.raquo" %%% "laminar" % Version.laminar,
@@ -30,6 +30,8 @@ lazy val front = (project in file("frontend"))
     scalaJSUseMainModuleInitializer := true
   )
 
+lazy val fronWebJar = front.webjar
+
 lazy val http = (project in file("http-server"))
   .enablePlugins(SbtWeb,JavaAppPackaging, DockerPlugin, DockerComposePlugin)
   .settings(
@@ -37,9 +39,8 @@ lazy val http = (project in file("http-server"))
     scalaJSProjects := Seq(front),
     Assets / pipelineStages := Seq(scalaJSPipeline),
     Compile / compile := ((Compile / compile) dependsOn scalaJSPipeline).value,
-    libraryDependencies ++= circle,
-    libraryDependencies ++= doobie,
     libraryDependencies ++= Seq(
+      "com.lihaoyi" %% "scalatags" % "0.8.2",
       zio,
       http4sBlazeServer,
       http4sDsl,
@@ -47,9 +48,9 @@ lazy val http = (project in file("http-server"))
       `zio-interop-cats`,
       logback,
       pureConfig
-    )
+    ) ++ circle ++ doobie
   )
-  .dependsOn(model)
+  .dependsOn(model).dependsOn(fronWebJar)
 
 lazy val myScalacOptions = Seq(
   "-feature",

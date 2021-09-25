@@ -25,21 +25,26 @@ object QcmIOApp extends zio.App {
                    val conf = rts.environment.get[HttpConf]
                    BlazeServerBuilder[ServerRIO](rts.platform.executor.asEC)
                      .bindHttp(conf.port, conf.host)
-                     .withHttpApp(initRoutes("qcm"))
+                     .withHttpApp(initRoutes)
                      .serve
                      .compile[ServerRIO, ServerRIO, CatsExitCode]
                      .drain
                  }
     } yield server
 
-  def initRoutes(
-      rootPath: String
-  ): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
+  def initRoutes: Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
     val questionEndpoint = new QuestionsEndpoint[AppEnvironment].routes
     val adminEndpoint = new AdminEndpoint[AppEnvironment].routes
+    val webJarsEndpoint = new StaticResourcesEndpoint[AppEnvironment].routes
+    val indexEndpoint = new IndexEndpoint[AppEnvironment].routes
 
-    val routes = adminEndpoint <+> questionEndpoint
-    Router[ServerRIO](rootPath -> routes).orNotFound
+    val routes = adminEndpoint <+>
+      questionEndpoint
+
+    Router[ServerRIO](
+      "qcm" -> routes,
+                "assets" -> (webJarsEndpoint <+>  indexEndpoint)
+    ).orNotFound
 
   }
   def run(args: List[String]): URIO[ZEnv, ExitCode] =
