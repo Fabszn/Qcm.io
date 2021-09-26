@@ -2,17 +2,16 @@ package http.server
 
 import cats.data.Kleisli
 import cats.effect.{ExitCode => CatsExitCode}
-import org.http4s.{Request, Response}
+import cats.implicits._
+import org.http4s.implicits._
+import org.http4s.server.Router
 import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.{Request, Response}
 import org.qcmio.environment.Environments.{AppEnvironment, appEnvironment}
 import org.qcmio.environment.config.Configuration.HttpConf
 import org.qcmio.environment.http._
-import org.http4s.implicits._
-import org.http4s.server.Router
-import cats.implicits._
-
-import zio.interop.catz._
 import zio._
+import zio.interop.catz._
 
 object QcmIOApp extends zio.App {
 
@@ -20,16 +19,16 @@ object QcmIOApp extends zio.App {
   val program =
     for {
       server <- ZIO
-                 .runtime[AppEnvironment]
-                 .flatMap { implicit rts =>
-                   val conf = rts.environment.get[HttpConf]
-                   BlazeServerBuilder[ServerRIO](rts.platform.executor.asEC)
-                     .bindHttp(conf.port, conf.host)
-                     .withHttpApp(initRoutes)
-                     .serve
-                     .compile[ServerRIO, ServerRIO, CatsExitCode]
-                     .drain
-                 }
+        .runtime[AppEnvironment]
+        .flatMap { implicit rts =>
+          val conf = rts.environment.get[HttpConf]
+          BlazeServerBuilder[ServerRIO](rts.platform.executor.asEC)
+            .bindHttp(conf.port, conf.host)
+            .withHttpApp(initRoutes)
+            .serve
+            .compile[ServerRIO, ServerRIO, CatsExitCode]
+            .drain
+        }
     } yield server
 
   def initRoutes: Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
@@ -42,11 +41,16 @@ object QcmIOApp extends zio.App {
       questionEndpoint
 
     Router[ServerRIO](
-      "qcm" -> routes,
-                "assets" -> (webJarsEndpoint <+>  indexEndpoint)
+      "qcm" -> indexEndpoint,
+      "api" -> routes,
+      "assets" -> {
+         webJarsEndpoint
+      }
+      //"qcm" -> routes,
     ).orNotFound
 
   }
+
   def run(args: List[String]): URIO[ZEnv, ExitCode] =
     program
       .provideSomeLayer(appEnvironment)

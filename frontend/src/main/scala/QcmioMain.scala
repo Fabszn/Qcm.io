@@ -21,9 +21,8 @@ object QcmioMain {
     val clickObserver = Observer[dom.MouseEvent](onNext = _ => QcmioRouter.router.pushState(LoginPage))
 
     lazy val container = dom.document.getElementById("app-container")
-val test  = html(body("Hello World"))
+
     val app: Div = div(
-      test,
       h1("Routing App"),
       p(
         button(

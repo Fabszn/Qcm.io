@@ -8,7 +8,7 @@ object Dependencies {
   object Version {
     lazy val zioVersion = "1.0.4-2"
     lazy val `zio-interop` = "2.3.1.0"
-    lazy val Http4sVersion = "0.21.19"
+    lazy val Http4sVersion = "0.21.24"
     lazy val quill = "3.6.1"
     lazy val doobieVersion = "0.12.1"
     lazy val circe = "0.13.0"

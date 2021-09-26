@@ -40,7 +40,6 @@ lazy val http = (project in file("http-server"))
     Assets / pipelineStages := Seq(scalaJSPipeline),
     Compile / compile := ((Compile / compile) dependsOn scalaJSPipeline).value,
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %% "scalatags" % "0.8.2",
       zio,
       http4sBlazeServer,
       http4sDsl,
