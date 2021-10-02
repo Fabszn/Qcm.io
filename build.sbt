@@ -52,6 +52,7 @@ lazy val http = (project in file("http-server"))
   .dependsOn(model).dependsOn(fronWebJar)
 
 lazy val myScalacOptions = Seq(
+  "-Ypartial-unification",
   "-feature",
   "-deprecation",
   "-encoding",

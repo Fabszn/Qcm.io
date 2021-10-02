@@ -55,7 +55,7 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
       } yield json
   }
 
-  val routes: HttpRoutes[QuestionTask] = Router(
+  val routes: HttpRoutes[QuestionTask] = Router[QuestionTask](
     prefixPath -> httpRoutes
   )
 

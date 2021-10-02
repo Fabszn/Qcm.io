@@ -54,10 +54,9 @@ object Pages {
           val $click = thisNode.events(onClick).sample(stateVar.signal)
           val $response = $click.flatMap { _ =>
             AjaxEventStream
-              .get("http://localhost:8080/qcm/admin")
+              .get("http://localhost:8088/qcm/login")
               .map("Response: " + _.responseText)
               .recover { case err: AjaxStreamError => Some(err.getMessage) }
-
           }
           List(
             $click.map(

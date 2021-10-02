@@ -9,7 +9,7 @@ import zio.clock.Clock
 object Environments {
 
   type HttpServerEnvironment = Configuration with Clock
-  type AppEnvironment = Configuration with Clock with QuestionRepository
+  type AppEnvironment = Blocking with Configuration with Clock with QuestionRepository
 
   val httpServerEnvironment: ULayer[HttpServerEnvironment] = Configuration.live ++ Clock.live
   val dbTransactor: Layer[Throwable, Has[DbTransactor.Resource]] =
@@ -17,6 +17,6 @@ object Environments {
   val questionRepository: Layer[Throwable,QuestionRepository] =
     dbTransactor >>> QuestionsRepository.live
   val appEnvironment: Layer[Throwable,AppEnvironment] =
-    questionRepository ++ httpServerEnvironment
+    Blocking.live ++ questionRepository ++ httpServerEnvironment
 
 }
