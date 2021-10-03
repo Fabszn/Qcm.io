@@ -1,5 +1,7 @@
 package org.qcmio
 
+import org.qcmio.model.Reponse.isCorrect
+
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder
 
@@ -13,7 +15,10 @@ object model {
   final case class Reponse(
       id: Reponse.Id,
       label: Reponse.Label,
-      questionId: Question.Id
+      questionId: Question.Id,
+      isCorrect: isCorrect
+
+
   )
 
   object Question {
@@ -27,7 +32,7 @@ object model {
   object Reponse {
     final case class Id(value: Long)         extends AnyVal
     final case class Label(value: String)    extends AnyVal
-    final case class isValid(value: Boolean) extends AnyVal
+    final case class isCorrect(value: Boolean) extends AnyVal
   }
 
   final case class Candidat(

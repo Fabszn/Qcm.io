@@ -6,8 +6,13 @@ version := "1.0"
 
 ThisBuild / scalaVersion  := "2.13.6"
 
-lazy val model =
-  (project in file("model")).settings(libraryDependencies ++= circle)
+lazy val shared =
+  (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("shared")).settings(libraryDependencies ++= circle)
+
+lazy val sharedJvm = shared.jvm
+lazy val sharedJs = shared.js
+
+
 lazy val db = (project in file("db"))
   .enablePlugins(FlywayPlugin)
   .settings(
@@ -28,7 +33,7 @@ lazy val front = (project in file("frontend"))
       "com.lihaoyi" %%% "upickle" % Version.upickle,
     ),
     scalaJSUseMainModuleInitializer := true
-  )
+  ).dependsOn(shared.js)
 
 lazy val fronWebJar = front.webjar
 
@@ -49,7 +54,7 @@ lazy val http = (project in file("http-server"))
       pureConfig
     ) ++ circle ++ doobie
   )
-  .dependsOn(model).dependsOn(fronWebJar)
+  .dependsOn(shared.jvm,fronWebJar)
 
 lazy val myScalacOptions = Seq(
   "-Ypartial-unification",
