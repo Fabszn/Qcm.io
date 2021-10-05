@@ -7,7 +7,11 @@ version := "1.0"
 ThisBuild / scalaVersion  := "2.13.6"
 
 lazy val shared =
-  (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("shared")).settings(libraryDependencies ++= circle)
+  (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("shared")).settings(libraryDependencies ++= Seq(
+    "io.circe" %%% "circe-core" % Version.circe,
+    "io.circe" %%% "circe-generic" % Version.circe,
+    "io.circe" %%% "circe-parser" % Version.circe
+  ))
 
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js

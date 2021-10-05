@@ -1,13 +1,16 @@
 package org.qcmio.environment.http
 
-import org.http4s.{HttpRoutes, Response}
+import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 import zio.RIO
-import org.http4s._, org.http4s.dsl.io._
+import org.qcmio.auth.User
 import zio.interop.catz._
+import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
+import org.slf4j.LoggerFactory
+
 
 final class LoginEndpoint[R] {
-
+ val logger = LoggerFactory.getLogger("LoginEndpoint")
 
   type LoginTask[A] = RIO[R, A]
 
@@ -17,7 +20,14 @@ final class LoginEndpoint[R] {
   import dsl._
 
   val httpRoutes = HttpRoutes.of[LoginTask] {
-    case GET -> Root / "login"  => Ok("login")
+    case req@POST -> Root / "login"  =>
+      for {
+        user <- req.as[User]
+         _ = {logger.debug(s"login info ${user}")}
+        rep <- Ok(s"Logged ${user.login}")
+      }yield{
+        rep
+      }
   }
 
 

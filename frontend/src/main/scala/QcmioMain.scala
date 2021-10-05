@@ -24,7 +24,9 @@ object QcmioMain {
 
     val app: Div = div(
       h1("Routing App"),
-      p(
+      Pages.loginPage
+    )
+      /*p(
         button(
           "Submit",
           onClick --> clickObserver,
@@ -32,7 +34,7 @@ object QcmioMain {
           )
         ),
         child <-- QcmioRouter.splitter.$view
-      )
+      )*/
 
     renderOnDomContentLoaded(container, app)
 

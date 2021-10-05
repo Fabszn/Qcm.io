@@ -28,6 +28,6 @@ package object http {
 
   //val authedRoutes: AuthedRoutes[User, Task] = ???
 
-  val authUser: Kleisli[Task, Request[Task], User] = Kleisli((r:Request[Task]) => Task(User("")))
+  val authUser: Kleisli[Task, Request[Task], User] = Kleisli((r:Request[Task]) => Task(User("","")))
 
 }

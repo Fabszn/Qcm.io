@@ -1,9 +1,11 @@
 package org.qcmio
 
 import org.qcmio.model.Reponse.isCorrect
-
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder
+import org.qcmio.model.Account.LastConnexionDate
+
+import java.time.{LocalDateTime, ZonedDateTime}
 
 object model {
 
@@ -47,6 +49,14 @@ object model {
     final case class Nom(value: String)    extends AnyVal
     final case class Prenom(value: String) extends AnyVal
     final case class Email(value: String)  extends AnyVal
+    final case class Mdp(value: String)  extends AnyVal
+  }
+
+  final case class Account(id:Account.Id, idCandidat:Candidat.Id, lastConnexion:LastConnexionDate)
+  object Account {
+    final case class Id(value: Long)       extends AnyVal
+    final case class LastConnexionDate(value: ZonedDateTime) extends AnyVal
+
   }
 
 }
