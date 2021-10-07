@@ -1,11 +1,14 @@
 package org.qcmio.environment.http
 
-import org.http4s.HttpRoutes
+import org.http4s.{Header, HttpRoutes}
 import org.http4s.dsl.Http4sDsl
 import zio.RIO
 import org.qcmio.auth.User
 import zio.interop.catz._
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
+import org.qcmio.Keys
+import org.qcmio.environment.http.jwt.JwtUtils
+import org.qcmio.model.Candidat
 import org.slf4j.LoggerFactory
 
 
@@ -24,7 +27,7 @@ final class LoginEndpoint[R] {
       for {
         user <- req.as[User]
          _ = {logger.debug(s"login info ${user}")}
-        rep <- Ok(s"Logged ${user.login}")
+        rep <- Ok(s"Logged ${user.login}",Header(Keys.tokenHeader, JwtUtils.buildToken(Candidat.Email(user.login))))
       }yield{
         rep
       }

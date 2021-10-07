@@ -35,7 +35,6 @@ lazy val front = (project in file("frontend"))
       "com.github.japgolly.scalacss" %%% "core" % Version.scalaCss,
       "com.raquo" %%% "waypoint" % Version.waypoint,
       "com.lihaoyi" %%% "upickle" % Version.upickle,
-      pureConfig
     ),
     scalaJSUseMainModuleInitializer := true
   ).dependsOn(shared.js)

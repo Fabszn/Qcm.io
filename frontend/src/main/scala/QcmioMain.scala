@@ -23,7 +23,6 @@ object QcmioMain {
     lazy val container = dom.document.getElementById("app-container")
 
     val app: Div = div(
-      h1("Routing App"),
       Pages.loginPage
     )
       /*p(

@@ -1,11 +1,12 @@
 package org.qcmio
 
 import org.qcmio.model.Reponse.isCorrect
-import io.circe.Decoder
-import io.circe.generic.semiauto.deriveDecoder
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import org.qcmio.model.Account.LastConnexionDate
+import org.qcmio.model.Question.Label
 
-import java.time.{LocalDateTime, ZonedDateTime}
+import java.time.ZonedDateTime
 
 object model {
 
@@ -49,6 +50,11 @@ object model {
     final case class Nom(value: String)    extends AnyVal
     final case class Prenom(value: String) extends AnyVal
     final case class Email(value: String)  extends AnyVal
+
+    object Email{
+      implicit  val labelDecoder: Decoder[Email] = deriveDecoder[Email]
+      implicit  val labelEncoder: Encoder[Email] = deriveEncoder[Email]
+    }
     final case class Mdp(value: String)  extends AnyVal
   }
 

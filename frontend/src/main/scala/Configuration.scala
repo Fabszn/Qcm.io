@@ -1,10 +1,10 @@
 package org.qcmio.front
 
-import pureconfig.ConfigSource
-import pureconfig.generic.auto._
+
 
 
 object Configuration {
+
 
   case class HttpBackend(port: Int, host: String)
 
@@ -13,8 +13,10 @@ object Configuration {
 
 
 
-  val frontConf = ConfigSource.default.loadOrThrow[FrontEndConfig]
 
-  val backendUrl = s"http://${frontConf.httpServer.host}:${frontConf.httpServer.port}"
+  //val frontConf = ConfigSource.default.loadOrThrow[FrontEndConfig]
+
+  //val backendUrl = s"http://${conf.getString("http-backend.host")}:${conf.getString("http-backend.port")}"
+  val backendUrl = s"http://localhost:8088"
 
 }

@@ -3,11 +3,11 @@ package org.qcmio.front
 import com.raquo.airstream.web.AjaxEventStream
 import com.raquo.airstream.web.AjaxEventStream.AjaxStreamError
 import com.raquo.laminar.api.L._
-import io.circe.generic.auto._
 import io.circe.syntax._
+import org.qcmio.Keys
 import org.qcmio.auth.User
-
-
+import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
+import org.scalajs.dom
 
 
 object Pages {
@@ -58,18 +58,23 @@ object Pages {
           val $response = $click.flatMap { state =>
             AjaxEventStream
               .post(s"${Configuration.backendUrl}/api/login", User(state.login, state.mdp).asJson.toString())
-              .map("Response: " + _.responseText)
+              .map(r => {
+                dom.window.localStorage.setItem("token", r.getResponseHeader(Keys.tokenHeader))
+                "connected"
+              })
               .recover { case err: AjaxStreamError => Some(err.getMessage) }
           }
           List(
             $click.map(
               opt => List(s"Les valeurs saisies : ${opt.login} / ${opt.mdp} et ensuite la réponse du server")
             ) --> eventsVar,
-            $response --> eventsVar.updater[String](_ :+ _)
+            $response --> QcmioRouter.router.pushState(HomePage)
           )
         })
       )
     )
   )
+
+  val homePage = div("Home page")
 
 }

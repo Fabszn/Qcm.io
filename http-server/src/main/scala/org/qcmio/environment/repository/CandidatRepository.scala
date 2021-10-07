@@ -4,6 +4,7 @@ import cats.implicits.catsSyntaxFlatMapOps
 import org.qcmio.model.{Account, Candidat}
 import zio.{RIO, Task, URLayer, ZLayer}
 import doobie.implicits._
+import zio.interop.catz._
 
 object CandidatsRepository {
 
@@ -14,7 +15,7 @@ object CandidatsRepository {
   trait Service {
     val resource: DbTransactor.Resource
 
-    def save(candidat: Candidat): RIO[CandidatRepository, Long]
+    def save(candidat: Candidat): Task[Long]
 
     def getCandidat(idCandidat: Candidat.Id): RIO[CandidatRepository, Candidat]
 
@@ -37,7 +38,7 @@ object CandidatsRepository {
     import ctx._
     import resource._
 
-    override def save(candidat: Candidat): RIO[CandidatRepository, Long] = run(quote(nextCandidatId)) >>= saveCandidat(candidat)
+    override def save(candidat: Candidat): Task[Long] = run(quote(nextCandidatId)).transact(xa) >>= saveCandidat(candidat)
 
     private def saveCandidat(candidat: Candidat)(id: Candidat.Id): Task[Long] =
       run(quote {

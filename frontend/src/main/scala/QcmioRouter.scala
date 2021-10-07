@@ -12,6 +12,7 @@ object QcmioRouter {
   sealed trait Page
   case class MainPage(userId: Int) extends Page
   case object LoginPage extends Page
+  case object HomePage extends Page
 
   implicit val UserPageRW: ReadWriter[MainPage] = macroRW
   implicit val rw: ReadWriter[Page] = macroRW
@@ -23,9 +24,10 @@ object QcmioRouter {
   )
 
   val loginRoute = Route.static(LoginPage, root / "login" / endOfSegments)
+  val homeRoute = Route.static(HomePage, root / "home" / endOfSegments)
 
   val router = new Router[Page](
-    routes = List(mainRoute, loginRoute),
+    routes = List(mainRoute, loginRoute, homeRoute),
     getPageTitle = _.toString, // mock page title (displayed in the browser tab next to favicon)
     serializePage = page => write(page)(rw), // serialize page data for storage in History API log
     deserializePage = pageStr => read(pageStr)(rw) // deserialize the above
@@ -37,6 +39,7 @@ object QcmioRouter {
   val splitter = SplitRender[Page, HtmlElement](router.$currentPage)
     .collectSignal[MainPage] { _=> renderMainPage() }
     .collectStatic(LoginPage) { Pages.loginPage }
+    .collectStatic(HomePage) { Pages.homePage }
 
   def renderMainPage(): ReactiveHtmlElement[Div] = {
     div(
