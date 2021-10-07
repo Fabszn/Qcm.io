@@ -39,12 +39,11 @@ object QuestionsRepository {
       run(quote(questionTable.filter(_.id == lift(id)))).transact(xa).map(_.headOption)
     }
 
-
     override def updateQuestion(id: Question.Id, label: Question.Label): Task[Long] =
       run(quote(questionTable.filter(q => q.id == lift(id)).update(_.label -> lift(label)))).transact(xa)
 
     def saveQuestion(label: Question.Label): Task[Long] =
-      run(quote(nextId)).transact(xa) >>= save(label)
+      run(quote(nextQuestionId)).transact(xa) >>= save(label)
 
     private def save(label: Question.Label)(id: Question.Id): Task[Long] =
       run(quote {

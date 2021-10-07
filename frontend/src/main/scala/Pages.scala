@@ -57,7 +57,7 @@ object Pages {
           val $click = thisNode.events(onClick).sample(stateVar.signal)
           val $response = $click.flatMap { state =>
             AjaxEventStream
-              .post("http://localhost:8088/api/login", User(state.login, state.mdp).asJson.toString())
+              .post(s"${Configuration.backendUrl}/api/login", User(state.login, state.mdp).asJson.toString())
               .map("Response: " + _.responseText)
               .recover { case err: AjaxStreamError => Some(err.getMessage) }
           }

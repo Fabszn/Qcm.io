@@ -2,7 +2,7 @@ package org.qcmio.environment.repository
 
 import doobie.quill.DoobieContext
 import io.getquill.{EntityQuery, SnakeCase}
-import org.qcmio.model.Question
+import org.qcmio.model.{Account, Candidat, Question}
 import zio.interop.catz._
 
 private[repository] trait DBContext {
@@ -11,8 +11,14 @@ private[repository] trait DBContext {
 
 private[repository] class QcmIODBContext extends DoobieContext.Postgres(SnakeCase) {
 
-  val nextId = quote(infix"""select nextval('seq_question')""".as[Question.Id])
+  val nextQuestionId = quote(infix"""select nextval('seq_question')""".as[Question.Id])
+  val nextAccountId = quote(infix"""select nextval('seq_account')""".as[Account.Id])
+  val nextCandidatId = quote(infix"""select nextval('seq_candidat')""".as[Candidat.Id])
 
   val questionTable = quote(querySchema[Question]("t_question", _.id -> "pkid_question"))
+
+  val candidatTable = quote(querySchema[Candidat]("t_candidat", _.id -> "pkid_candidat"))
+
+  val accountTable = quote(querySchema[Account]("t_account", _.id -> "pkid_account"))
 
 }

@@ -35,6 +35,7 @@ lazy val front = (project in file("frontend"))
       "com.github.japgolly.scalacss" %%% "core" % Version.scalaCss,
       "com.raquo" %%% "waypoint" % Version.waypoint,
       "com.lihaoyi" %%% "upickle" % Version.upickle,
+      pureConfig
     ),
     scalaJSUseMainModuleInitializer := true
   ).dependsOn(shared.js)
@@ -55,7 +56,8 @@ lazy val http = (project in file("http-server"))
       http4sCircle,
       `zio-interop-cats`,
       logback,
-      pureConfig
+      pureConfig,
+        scalaJwt
     ) ++ circle ++ doobie
   )
   .dependsOn(shared.jvm,fronWebJar)

@@ -14,6 +14,7 @@ package object repository {
 
   type DbTransactor = Has[DbTransactor.Resource]
   type QuestionRepository = Has[QuestionsRepository.Service]
+  type CandidatRepository = Has[CandidatsRepository.Service]
 
 
 

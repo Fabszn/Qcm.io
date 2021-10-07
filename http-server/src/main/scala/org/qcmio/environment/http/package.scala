@@ -30,4 +30,6 @@ package object http {
 
   val authUser: Kleisli[Task, Request[Task], User] = Kleisli((r:Request[Task]) => Task(User("","")))
 
+
+
 }

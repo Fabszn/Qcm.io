@@ -17,7 +17,10 @@ object Dependencies {
     lazy val scalaCss = "0.8.0-RC1"
     lazy val waypoint = "0.4.2"
     lazy val upickle = "1.3.13"
+    lazy val scalaJwt = "9.0.2"
   }
+
+  lazy val scalaJwt = "com.github.jwt-scala" %% "jwt-circe" % Version.scalaJwt
 
   lazy val doobie = Seq(
     "org.tpolecat" %% "doobie-core" % doobieVersion,
