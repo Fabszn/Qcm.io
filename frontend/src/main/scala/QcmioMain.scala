@@ -2,15 +2,13 @@ package org.qcmio.front
 
 import com.raquo.laminar.api.L._
 import com.raquo.waypoint.root
-import org.qcmio.front.QcmioRouter.LoginPage
+import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
 import org.scalajs.dom
 import scalacss.internal.mutable.GlobalRegistry
-
 
 object QcmioMain {
 
   def main(args: Array[String]): Unit = {
-
 
     val CssSettings = scalacss.devOrProdDefaults
     import CssSettings._
@@ -23,17 +21,25 @@ object QcmioMain {
     lazy val container = dom.document.getElementById("app-container")
 
     val app: Div = div(
-      Pages.loginPage
+      child <-- QcmioRouter.splitter.$view
     )
-      /*p(
-        button(
-          "Submit",
-          onClick --> clickObserver,
-           div("Hello Worl")
-          )
-        ),
-        child <-- QcmioRouter.splitter.$view
-      )*/
+
+    dom.document.addEventListener(
+      "DOMContentLoaded", { (e: dom.Event) =>{
+        val token = dom.window.localStorage.getItem("valeur")
+        println(s"token -${token}-")
+        println(s"token -${token}-")
+        println(s"token -${token}-")
+        println(s"token -${token}-")
+        if (token == null) {
+          println("test")
+          QcmioRouter.router.pushState(HomePage)
+        } else {
+          QcmioRouter.router.pushState(LoginPage)
+        }
+        }
+      }
+    )
 
     renderOnDomContentLoaded(container, app)
 

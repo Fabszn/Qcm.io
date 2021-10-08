@@ -67,8 +67,7 @@ object Pages {
           List(
             $click.map(
               opt => List(s"Les valeurs saisies : ${opt.login} / ${opt.mdp} et ensuite la réponse du server")
-            ) --> eventsVar,
-            $response --> QcmioRouter.router.pushState(HomePage)
+            ) --> eventsVar
           )
         })
       )
