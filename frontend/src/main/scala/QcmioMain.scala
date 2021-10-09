@@ -2,6 +2,7 @@ package org.qcmio.front
 
 import com.raquo.laminar.api.L._
 import com.raquo.waypoint.root
+import org.qcmio.Keys
 import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
 import org.scalajs.dom
 import scalacss.internal.mutable.GlobalRegistry
@@ -26,16 +27,12 @@ object QcmioMain {
 
     dom.document.addEventListener(
       "DOMContentLoaded", { (e: dom.Event) =>{
-        val token = dom.window.localStorage.getItem("valeur")
-        println(s"token -${token}-")
-        println(s"token -${token}-")
-        println(s"token -${token}-")
-        println(s"token -${token}-")
+        val token = dom.window.localStorage.getItem(Keys.tokenLoSto)
+
         if (token == null) {
-          println("test")
-          QcmioRouter.router.pushState(HomePage)
-        } else {
           QcmioRouter.router.pushState(LoginPage)
+        } else {
+          QcmioRouter.router.pushState(HomePage)
         }
         }
       }

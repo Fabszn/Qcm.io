@@ -6,7 +6,7 @@ import com.raquo.laminar.api.L._
 import io.circe.syntax._
 import org.qcmio.Keys
 import org.qcmio.auth.User
-import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
+import org.qcmio.front.QcmioRouter.HomePage
 import org.scalajs.dom
 
 
@@ -55,20 +55,19 @@ object Pages {
         "Submit",
         inContext(thisNode => {
           val $click = thisNode.events(onClick).sample(stateVar.signal)
-          val $response = $click.flatMap { state =>
+          val $response: EventStream[String] = $click.flatMap { state =>
             AjaxEventStream
               .post(s"${Configuration.backendUrl}/api/login", User(state.login, state.mdp).asJson.toString())
               .map(r => {
-                dom.window.localStorage.setItem("token", r.getResponseHeader(Keys.tokenHeader))
+                dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
+                QcmioRouter.router.pushState(HomePage)
                 "connected"
               })
               .recover { case err: AjaxStreamError => Some(err.getMessage) }
           }
-          List(
-            $click.map(
-              opt => List(s"Les valeurs saisies : ${opt.login} / ${opt.mdp} et ensuite la réponse du server")
-            ) --> eventsVar
-          )
+
+            $response --> eventsVar.updater[String](_ :+ _)
+
         })
       )
     )
