@@ -7,7 +7,7 @@ import upickle.default._
 import org.scalajs.dom.html.Div
 
 
-object QcmioRouter {
+object QcmioRouter extends WithGlobalState {
 
   sealed trait Page
   case class MainPage(userId: Int) extends Page
@@ -36,10 +36,10 @@ object QcmioRouter {
     owner = unsafeWindowOwner // this router will live as long as the window
   )
 
-  val splitter = SplitRender[Page, HtmlElement](router.$currentPage)
+  def splitter(gState:QCMGlobalState) = SplitRender[Page, HtmlElement](router.$currentPage)
     .collectSignal[MainPage] { _=> renderMainPage() }
-    .collectStatic(LoginPage) { Pages.loginPage }
-    .collectStatic(HomePage) { Pages.homePage }
+    .collectStatic(LoginPage) { Pages.loginPage(gState) }
+    .collectStatic(HomePage) { Pages.homePage(gState) }
 
   def renderMainPage(): ReactiveHtmlElement[Div] = {
     div(

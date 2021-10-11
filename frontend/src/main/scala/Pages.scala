@@ -6,18 +6,20 @@ import com.raquo.laminar.api.L._
 import io.circe.syntax._
 import org.qcmio.Keys
 import org.qcmio.auth.User
-import org.qcmio.front.QcmioRouter.LoginPage
+import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
 import org.scalajs.dom
 
 
-object Pages {
+object Pages extends WithGlobalState {
 
   case class LoginState(login: String = "", mdp: String = "")
 
   case class QcmState(token: Option[String] = None)
 
 
-  val qcmAppState = Var(QcmState())
+
+
+
   val stateVar = Var(LoginState(login = "Michel", mdp = "toto"))
 
   val eventsVar = Var(List.empty[String])
@@ -34,7 +36,10 @@ object Pages {
   val pwdWriter = stateVar.updater[String]((state, pass) => state.copy(mdp = pass))
 
 
-  val loginPage = div(
+  def loginPage(gState:QCMGlobalState) = div(
+    p(
+      input(value <-- gState.signal.map(_.token.getOrElse("no tokeken")))
+    ),
     cls := QcmIoCss.loginForm.className.value,
     renderInputRow(
       label("Login: "),
@@ -59,19 +64,21 @@ object Pages {
       button(
         "Submit",
         composeEvents(onClick)(_.flatMap( _ => {
-          dom.console.log("teest")
           AjaxEventStream
           .post(s"${Configuration.backendUrl}/api/login", User(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString())
           .map(r => {
             dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
             r.getResponseHeader(Keys.tokenHeader)
-            QcmioRouter.router.pushState(LoginPage)
-          }).recover { case err: AjaxStreamError => Some(err.getMessage) }})) --> qcmAppState.updater[String] { case (state, token) => state.copy(token = Some(token)) }
+
+          }).recover {
+            case err: AjaxStreamError => Some(err.getMessage)
+          }})) --> ((t:String) =>  gState.update(_.copy(token = Some(t)))).andThen(_ => QcmioRouter.router.pushState(HomePage))
+
       )
     )
 
   )
 
-  val homePage = div(s"Home page${qcmAppState.now().token}")
+  def homePage(gstate:QCMGlobalState) = div(s"Home page${gstate.signal.now().token}")
 
 }
