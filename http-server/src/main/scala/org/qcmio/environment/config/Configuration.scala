@@ -15,12 +15,14 @@ object Configuration {
       password: String
   )
 
-  final case class AppConfig(database: DbConf, httpServer: HttpConf)
+  final case class JwtConf(key:String, algo: String)
+
+  final case class AppConfig(database: DbConf, httpServer: HttpConf, jwt:JwtConf)
 
   val live: ULayer[Configuration] = ZLayer.fromEffectMany(
     ZIO
       .effect(ConfigSource.default.loadOrThrow[AppConfig])
-      .map(c => Has(c.httpServer) ++ Has(c.database))
+      .map(c => Has(c.httpServer) ++ Has(c.database) ++ Has(c.jwt))
       .orDie
   )
 

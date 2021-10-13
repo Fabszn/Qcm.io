@@ -69,7 +69,6 @@ object Pages extends WithGlobalState {
           .map(r => {
             dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
             r.getResponseHeader(Keys.tokenHeader)
-
           }).recover {
             case err: AjaxStreamError => Some(err.getMessage)
           }})) --> ((t:String) =>  gState.update(_.copy(token = Some(t)))).andThen(_ => QcmioRouter.router.pushState(HomePage))
