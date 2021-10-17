@@ -1,9 +1,13 @@
 package org.qcmio.environment.http.jwt
 
-import org.qcmio.model.Candidat
-import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 import io.circe.syntax._
+import org.qcmio.environment.config.Configuration.JwtConf
+import org.qcmio.model.Candidat
+import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim, JwtOptions}
+import zio.Task
+
 import java.time.Instant
+import javax.crypto.SecretKey
 
 object JwtUtils {
 
@@ -21,5 +25,10 @@ object JwtUtils {
 
     JwtCirce.encode(claim, key, algo)
   }
+
+  def isValidToken(token:String, jwtConf:JwtConf):Boolean =
+    JwtCirce.isValid(token, jwtConf.key, Seq(JwtAlgorithm.HS256),JwtOptions.DEFAULT)
+
+
 
 }

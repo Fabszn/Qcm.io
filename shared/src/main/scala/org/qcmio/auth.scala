@@ -6,11 +6,16 @@ import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
 object auth {
 
-  case class User(login:String, mdp:String)
+  trait User
+  case class AuthenticatedUser(login:String) extends User
+  case object NoAuthorizedUser extends User
 
-  object User{
-    implicit  val labelDecoder: Decoder[User] = deriveDecoder[User]
-    implicit  val labelEncoder: Encoder[User] = deriveEncoder[User]
+  final case class LoginInfo(login:String, mdp:String)
+
+
+  object LoginInfo{
+    implicit  val labelDecoder: Decoder[LoginInfo] = deriveDecoder[LoginInfo]
+    implicit  val labelEncoder: Encoder[LoginInfo] = deriveEncoder[LoginInfo]
   }
 
 }

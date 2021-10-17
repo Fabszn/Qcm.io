@@ -10,9 +10,15 @@ import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
 import org.scalajs.dom
 
 
-object Pages {
+object Pages extends WithGlobalState {
 
   case class LoginState(login: String = "", mdp: String = "")
+
+  case class QcmState(token: Option[String] = None)
+
+
+
+
 
   val stateVar = Var(LoginState(login = "Michel", mdp = "toto"))
 
@@ -29,7 +35,11 @@ object Pages {
 
   val pwdWriter = stateVar.updater[String]((state, pass) => state.copy(mdp = pass))
 
-  val loginPage = div(
+
+  def loginPage(gState:QCMGlobalState) = div(
+    p(
+      input(value <-- gState.signal.map(_.token.getOrElse("no tokeken")))
+    ),
     cls := QcmIoCss.loginForm.className.value,
     renderInputRow(
       label("Login: "),
@@ -53,27 +63,21 @@ object Pages {
     p(
       button(
         "Submit",
-        inContext(thisNode => {
-          val $click = thisNode.events(onClick).sample(stateVar.signal)
-          val $response = $click.flatMap { state =>
-            AjaxEventStream
-              .post(s"${Configuration.backendUrl}/api/login", User(state.login, state.mdp).asJson.toString())
-              .map(r => {
-                dom.window.localStorage.setItem("token", r.getResponseHeader(Keys.tokenHeader))
-                "connected"
-              })
-              .recover { case err: AjaxStreamError => Some(err.getMessage) }
-          }
-          List(
-            $click.map(
-              opt => List(s"Les valeurs saisies : ${opt.login} / ${opt.mdp} et ensuite la réponse du server")
-            ) --> eventsVar
-          )
-        })
+        composeEvents(onClick)(_.flatMap( _ => {
+          AjaxEventStream
+          .post(s"${Configuration.backendUrl}/api/login", User(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString())
+          .map(r => {
+            dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
+            r.getResponseHeader(Keys.tokenHeader)
+          }).recover {
+            case err: AjaxStreamError => Some(err.getMessage)
+          }})) --> ((t:String) =>  gState.update(_.copy(token = Some(t)))).andThen(_ => QcmioRouter.router.pushState(HomePage))
+
       )
     )
+
   )
 
-  val homePage = div("Home page")
+  def homePage(gstate:QCMGlobalState) = div(s"Home page${gstate.signal.now().token}")
 
 }
