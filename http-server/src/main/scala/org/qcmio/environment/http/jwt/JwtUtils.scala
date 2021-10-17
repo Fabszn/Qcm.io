@@ -26,9 +26,9 @@ object JwtUtils {
     JwtCirce.encode(claim, key, algo)
   }
 
-  def isValidToken(token:String, jwtConf:JwtConf):Task[Boolean] ={
-    JwtCirce.isValid(token, jwtConf.key, Seq(JwtAlgorithm.fromString(jwtConf.algo)),JwtOptions.DEFAULT)
-  }
+  def isValidToken(token:String, jwtConf:JwtConf):Boolean =
+    JwtCirce.isValid(token, jwtConf.key, Seq(JwtAlgorithm.HS256),JwtOptions.DEFAULT)
+
 
 
 }

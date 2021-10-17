@@ -1,21 +1,16 @@
 package org.qcmio.environment
 
 import cats.Applicative
-import cats.data.{Kleisli, OptionT}
+import cats.data.Kleisli
 import io.circe.Encoder
-import org.http4s.{AuthedRoutes, EntityEncoder, Request}
 import org.http4s.circe.jsonEncoderOf
-import org.qcmio.auth.User
-import zio.interop.catz.monadErrorInstance
-import zio.{IO, Task}
-import cats._
-import cats.effect._
-import cats.implicits._
-import cats.data._
-
-import org.http4s._
-import org.http4s.dsl.io._
-import org.http4s.server._
+import org.http4s.util.CaseInsensitiveString
+import org.http4s.{EntityEncoder, Request}
+import org.qcmio.Keys
+import org.qcmio.auth.{AuthenticatedUser, NoAuthorizedUser, User}
+import org.qcmio.environment.config.Configuration.JwtConf
+import org.qcmio.environment.http.jwt.JwtUtils
+import zio.Task
 
 package object http {
 
@@ -25,11 +20,22 @@ package object http {
   ): EntityEncoder[F, A] =
     jsonEncoderOf[F, A]
 
-
-  //val authedRoutes: AuthedRoutes[User, Task] = ???
-
-  val authUser: Kleisli[Task, Request[Task], User] = Kleisli((r:Request[Task]) => Task(User("","")))
-
-
+  def authUser(conf: JwtConf): Kleisli[Task, Request[Task], User] =
+    Kleisli(
+      r =>
+        Task[User](
+          r.headers
+            .get(CaseInsensitiveString(Keys.tokenHeader))
+            .map { token =>
+              if (JwtUtils.isValidToken(token.value, conf)) {
+                //todo Decode Token to get user Info
+                AuthenticatedUser("To be completed")
+              } else {
+                NoAuthorizedUser
+              }
+            }
+            .getOrElse(NoAuthorizedUser)
+        )
+    )
 
 }

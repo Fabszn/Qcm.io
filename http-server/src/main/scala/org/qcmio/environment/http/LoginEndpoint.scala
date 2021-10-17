@@ -5,7 +5,7 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.util.CaseInsensitiveString
 import org.http4s.{Header, HttpRoutes}
 import org.qcmio.Keys
-import org.qcmio.auth.User
+import org.qcmio.auth.{LoginInfo}
 import org.qcmio.environment.config.Configuration.JwtConf
 import org.qcmio.environment.http.jwt.JwtUtils
 import org.qcmio.model.Candidat
@@ -14,20 +14,20 @@ import zio.interop.catz._
 import zio.{RIO, Task}
 
 final class LoginEndpoint[R](jwtConfg: JwtConf) {
-  val logger = LoggerFactory.getLogger("LoginEndpoint")
+  private val logger = LoggerFactory.getLogger("LoginEndpoint")
 
   type LoginTask[A] = RIO[R, A]
 
-  val dsl = Http4sDsl[LoginTask]
+  private val dsl = Http4sDsl[LoginTask]
 
   import dsl._
 
-  val httpRoutes = HttpRoutes.of[LoginTask] {
+  val httpRoutes: HttpRoutes[LoginTask] = HttpRoutes.of[LoginTask] {
     case req @ POST -> Root / "login" =>
       for {
-        user <- req.as[User]
-        _ = { logger.debug(s"login info ${user}") }
-        rep <- Ok(s"Logged ${user.login}", Header(Keys.tokenHeader, JwtUtils.buildToken(Candidat.Email(user.login))))
+        info <- req.as[LoginInfo]
+        _ = { logger.debug(s"login info ${info}") }
+        rep <- Ok(s"Logged ${info.login}", Header(Keys.tokenHeader, JwtUtils.buildToken(Candidat.Email(info.login))))
       } yield {
         rep
       }
