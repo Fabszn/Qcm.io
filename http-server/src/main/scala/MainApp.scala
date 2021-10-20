@@ -49,7 +49,7 @@ object QcmIOApp extends zio.App {
   def initRoutes(exec:Executor,conf:JwtConf): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
     val questionEndpoint = new QuestionsEndpoint[AppEnvironment].routes
     val adminEndpoint = new AdminEndpoint[AppEnvironment].routes
-    val loginEndpoint = new LoginEndpoint[AppEnvironment].httpRoutes
+    val loginEndpoint = new LoginEndpoint[AppEnvironment](conf).httpRoutes
 
     val routes = questionEndpoint <+> adminEndpoint <+> loginEndpoint
 

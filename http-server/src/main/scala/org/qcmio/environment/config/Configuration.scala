@@ -15,7 +15,7 @@ object Configuration {
       password: String
   )
 
-  final case class JwtConf(key:String, algo: String)
+  final case class JwtConf(secretKey:String, algo: String)
 
   final case class AppConfig(database: DbConf, httpServer: HttpConf, jwt:JwtConf)
 

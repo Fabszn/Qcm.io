@@ -18,6 +18,7 @@ object Dependencies {
     lazy val waypoint = "0.4.2"
     lazy val upickle = "1.3.13"
     lazy val scalaJwt = "9.0.2"
+    lazy val scalaTest = "3.2.10"
   }
 
   lazy val scalaJwt = "com.github.jwt-scala" %% "jwt-circe" % Version.scalaJwt
@@ -50,5 +51,7 @@ object Dependencies {
 
   val quillJdbc = "io.getquill" %% "quill-jdbc" % Version.quill
 
+
+  lazy val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest % "test"
 
 }

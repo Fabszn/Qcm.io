@@ -13,6 +13,7 @@ object QcmioRouter extends WithGlobalState {
   case class MainPage(userId: Int) extends Page
   case object LoginPage extends Page
   case object HomePage extends Page
+  case object EntryPage extends Page
 
   implicit val UserPageRW: ReadWriter[MainPage] = macroRW
   implicit val rw: ReadWriter[Page] = macroRW
@@ -25,6 +26,7 @@ object QcmioRouter extends WithGlobalState {
 
   val loginRoute = Route.static(LoginPage, root / "login" / endOfSegments)
   val homeRoute = Route.static(HomePage, root / "home" / endOfSegments)
+  val entryPoint = Route.static(EntryPage, root / "qcm" / "index.html"/ endOfSegments)
 
   val router = new Router[Page](
     routes = List(mainRoute, loginRoute, homeRoute),
@@ -40,6 +42,7 @@ object QcmioRouter extends WithGlobalState {
     .collectSignal[MainPage] { _=> renderMainPage() }
     .collectStatic(LoginPage) { Pages.loginPage(gState) }
     .collectStatic(HomePage) { Pages.homePage(gState) }
+    .collectStatic(EntryPage) { Pages.homePage(gState) }
 
   def renderMainPage(): ReactiveHtmlElement[Div] = {
     div(

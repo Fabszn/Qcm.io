@@ -56,7 +56,8 @@ lazy val http = (project in file("http-server"))
       `zio-interop-cats`,
       logback,
       pureConfig,
-        scalaJwt
+        scalaJwt,
+      scalaTest
     ) ++ circle ++ doobie
   )
   .dependsOn(shared.jvm,fronWebJar)

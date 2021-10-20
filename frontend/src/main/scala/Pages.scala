@@ -5,7 +5,7 @@ import com.raquo.airstream.web.AjaxEventStream.AjaxStreamError
 import com.raquo.laminar.api.L._
 import io.circe.syntax._
 import org.qcmio.Keys
-import org.qcmio.auth.User
+import org.qcmio.auth.{LoginInfo, User}
 import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
 import org.scalajs.dom
 
@@ -65,7 +65,7 @@ object Pages extends WithGlobalState {
         "Submit",
         composeEvents(onClick)(_.flatMap( _ => {
           AjaxEventStream
-          .post(s"${Configuration.backendUrl}/api/login", User(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString())
+          .post(s"${Configuration.backendUrl}/api/login", LoginInfo(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString())
           .map(r => {
             dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
             r.getResponseHeader(Keys.tokenHeader)

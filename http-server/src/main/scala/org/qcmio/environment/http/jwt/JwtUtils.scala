@@ -4,30 +4,31 @@ import io.circe.syntax._
 import org.qcmio.environment.config.Configuration.JwtConf
 import org.qcmio.model.Candidat
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim, JwtOptions}
-import zio.Task
+import io.circe._,  jawn.{parse => jawnParse}
 
 import java.time.Instant
 import javax.crypto.SecretKey
+import scala.util.{Failure, Success}
 
 object JwtUtils {
 
-  def buildToken(email:Candidat.Email):String = {
+  def buildToken(email:Candidat.Email, conf:JwtConf):String = {
+
     val claim = JwtClaim(
-      content = ("email" -> email.asJson).asJson.spaces4,
       expiration = Some(Instant.now.plusSeconds(157784760).getEpochSecond)
       , issuedAt = Some(Instant.now.getEpochSecond)
-    )
-    // claim: JwtClaim = JwtClaim({}, None, None, None, Some(1791123256), None, Some(1633338496), None)
-    val key = "secretKey"
-    // key: String = "secretKey"
+    ) + ("email", email.value)
+    val key = conf.secretKey
     val algo = JwtAlgorithm.HS256
-    // algo: JwtAlgorithm.HS256.type = HS256
 
     JwtCirce.encode(claim, key, algo)
   }
 
   def isValidToken(token:String, jwtConf:JwtConf):Boolean =
-    JwtCirce.isValid(token, jwtConf.key, Seq(JwtAlgorithm.HS256),JwtOptions.DEFAULT)
+    JwtCirce.decodeJson(token, jwtConf.secretKey, Seq(JwtAlgorithm.HS256)) match {
+      case Failure(exception) => exception.printStackTrace();false
+      case Success(_) => true
+    }
 
 
 
