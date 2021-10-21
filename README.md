@@ -1,13 +1,35 @@
-Objectif : 
+# Purpose 
 
-    [X] Step 1 : Mettre en place une application qui répond à : http://localhost:9000/hello -> Hi!
-    [X] Step 2 : Mettre cette application dans un container docker
-    [X] Step 3 : Ajouter une base de données ou la valeur sera lue 
-        - [X] 3.1 : Ajouter un docker compose pour lancer une DB
-        - [X] 3.2 : Mettre une lib type doobie 
-        - [X] 3.3 : Construire la requête pour la servir derrière le end-point
-    [] Step 4 : Mise en place l'authentification sur l'API
+    //to describ
 
- add yarn vite tools (for front purpose)
+# Stack
+
+## Backend
+    Http4s (https://http4s.org)
+    ZIO (https://zio.dev)
+    Doobie (https://tpolecat.github.io/doobie/)
+    Quill (https://getquill.io/)
+## Frontend   
+    ScalaJs 
+    Laminar (http://Laminar.dev/)
+    AirStream (https://github.com/raquo/Airstream)
+    waypoint
+## Shared
+    Circe
+
+## Tools
+
+    Postgres
+    Docker
+
+# Start app
+
+    1 - DB 
+        docker-compose up
+
+    2 - App
+        sbt http/run
+
+
 
 

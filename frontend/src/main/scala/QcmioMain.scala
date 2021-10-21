@@ -12,10 +12,6 @@ object QcmioMain {
 
   def main(args: Array[String]): Unit = {
 
-    //val CssSettings = scalacss.devOrProdDefaults
-    //import CssSettings._
-
-    //GlobalRegistry.addToDocumentOnRegistration()
     GlobalRegistry.register(QcmIoCss)
 
     val qcmAppState = Var(QcmState())
@@ -27,38 +23,37 @@ object QcmioMain {
       else
         QcmioRouter.router.pushState(LoginPage)
     })
+   lazy val container = dom.document.getElementById("app-container")
+    val initModifier: Modifier[Div] = {
+      val token = dom.window.localStorage.getItem(Keys.tokenLoSto)
+      if (token == null) {
+        QcmioRouter.router.pushState(LoginPage)
+        emptyMod
+      } else {
+        AjaxEventStream
+          .get(s"${Configuration.backendUrl}/api/login/isValid")
+          .map(r => {
+           r.status.toString
+          }).debugLogErrors() --> checkTokenObserver
 
-    lazy val container = dom.document.getElementById("app-container")
+      }
+    }
 
     val app: Div = div(
+      initModifier,
       child <-- QcmioRouter.splitter(qcmAppState).$view
     )
 
 
-    dom.document.addEventListener(
-      "DOMContentLoaded", { (e: dom.Event) => {
-        val token = dom.window.localStorage.getItem(Keys.tokenLoSto)
-        dom.console.info("Load load 33333")
-        if (token == null) {
-          QcmioRouter.router.pushState(LoginPage)
-        } else {
-          dom.console.info("Load load")
-          (AjaxEventStream
-            .get(s"${Configuration.backendUrl}/api/login/isValid")
-            .map(r => {
-              dom.console.info(r.status)
-              r.status.toString
-            }) --> checkTokenObserver )
 
 
-        }
 
-      }
-      }
-    )
+
+
 
     renderOnDomContentLoaded(container, app)
 
   }
+
 
 }

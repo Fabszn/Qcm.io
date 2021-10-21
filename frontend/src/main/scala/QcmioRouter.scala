@@ -18,18 +18,12 @@ object QcmioRouter extends WithGlobalState {
   implicit val UserPageRW: ReadWriter[MainPage] = macroRW
   implicit val rw: ReadWriter[Page] = macroRW
 
-  val mainRoute = Route[MainPage, Int](
-    encode = mainPage => mainPage.userId,
-    decode = arg => MainPage(userId = arg),
-    pattern = root / "main" / segment[Int] / endOfSegments
-  )
-
   val loginRoute = Route.static(LoginPage, root / "login" / endOfSegments)
   val homeRoute = Route.static(HomePage, root / "home" / endOfSegments)
   val entryPoint = Route.static(EntryPage, root / "qcm" / "index.html"/ endOfSegments)
 
   val router = new Router[Page](
-    routes = List(mainRoute, loginRoute, homeRoute),
+    routes = List(entryPoint, loginRoute, homeRoute),
     getPageTitle = _.toString, // mock page title (displayed in the browser tab next to favicon)
     serializePage = page => write(page)(rw), // serialize page data for storage in History API log
     deserializePage = pageStr => read(pageStr)(rw) // deserialize the above
@@ -39,10 +33,9 @@ object QcmioRouter extends WithGlobalState {
   )
 
   def splitter(gState:QCMGlobalState) = SplitRender[Page, HtmlElement](router.$currentPage)
-    .collectSignal[MainPage] { _=> renderMainPage() }
     .collectStatic(LoginPage) { Pages.loginPage(gState) }
     .collectStatic(HomePage) { Pages.homePage(gState) }
-    .collectStatic(EntryPage) { Pages.homePage(gState) }
+    .collectStatic(EntryPage) { div() }
 
   def renderMainPage(): ReactiveHtmlElement[Div] = {
     div(
