@@ -73,4 +73,6 @@ object QcmIOApp extends zio.App {
     program
       .provideSomeLayer(appEnvironment)
       .fold[ExitCode](_ => ExitCode.failure, _ => ExitCode.success)
+
+
 }
