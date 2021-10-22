@@ -1,6 +1,7 @@
 package org.qcmio.front
 
 import com.raquo.airstream.web.AjaxEventStream
+import com.raquo.airstream.web.AjaxEventStream.AjaxStatusError
 import com.raquo.laminar.api.L._
 import org.qcmio.Keys
 import org.qcmio.front.Pages.QcmState
@@ -12,17 +13,22 @@ object QcmioMain {
 
   def main(args: Array[String]): Unit = {
 
+    val CssSettings = scalacss.devOrProdDefaults
+    import CssSettings._
+    GlobalRegistry.addToDocumentOnRegistration()
     GlobalRegistry.register(QcmIoCss)
 
     val qcmAppState = Var(QcmState())
 
-    val checkTokenObserver: Observer[String] = Observer[String](onNext = status => {
+    val checkTokenObserver: Observer[Int] = Observer[Int](onNext = status => {
       dom.console.info("Observer")
-      if (status == "200")
+      if (status == 200)
         QcmioRouter.router.pushState(HomePage)
       else
         QcmioRouter.router.pushState(LoginPage)
     })
+
+
    lazy val container = dom.document.getElementById("app-container")
     val initModifier: Modifier[Div] = {
       val token = dom.window.localStorage.getItem(Keys.tokenLoSto)
@@ -32,9 +38,13 @@ object QcmioMain {
       } else {
         AjaxEventStream
           .get(s"${Configuration.backendUrl}/api/login/isValid")
-          .map(r => {
-           r.status.toString
-          }).debugLogErrors() --> checkTokenObserver
+          .map(r =>
+           r.status
+          ).recover{
+          case e:AjaxStatusError => {
+            QcmioRouter.router.pushState(LoginPage)
+            Some(e.status)}
+        }.debugLogErrors() --> checkTokenObserver
 
       }
     }
