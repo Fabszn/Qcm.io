@@ -78,6 +78,14 @@ object Pages extends WithGlobalState {
 
   )
 
-  def homePage(gstate:QCMGlobalState) = div(s"Home page${gstate.signal.now().token}")
+  def homePage(gstate:QCMGlobalState) = div(header)
+
+
+
+
+
+
+  val header = div(cls := QcmIoCss.headerCss.className.value,"Header")
+  //val header = div(cls := QcmIoCss.headerCss.className.value,"Header")
 
 }

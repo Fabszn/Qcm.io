@@ -37,7 +37,7 @@ object QcmioMain {
         emptyMod
       } else {
         AjaxEventStream
-          .get(s"${Configuration.backendUrl}/api/login/isValid")
+          .get(s"${Configuration.backendUrl}/api/login/isValid", headers = Map(Keys.tokenHeader -> token))
           .map(r =>
            r.status
           ).recover{

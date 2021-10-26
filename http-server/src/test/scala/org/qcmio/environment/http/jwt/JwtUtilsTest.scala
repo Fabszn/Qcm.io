@@ -9,7 +9,6 @@ class JwtUtilsTest extends AnyWordSpec {
   "Token should be valid" in {
     val jwtConf = JwtConf("1232344", "")
     val token = JwtUtils.buildToken(Candidat.Email( "fab@fab.com"), jwtConf)
-    println(token)
     assert(JwtUtils.isValidToken(token, jwtConf))
   }
 }

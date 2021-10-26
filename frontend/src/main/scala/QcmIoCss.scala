@@ -16,6 +16,14 @@ object QcmIoCss extends StyleSheet.Inline {
     flexDirection.column,
     backgroundColor(Color("gray"))
   )
+
+  val headerCss = style(
+    display.flex,
+    justifyContent.center,
+    alignItems.flexStart,
+    backgroundColor(Color("gray")),
+    borderColor(Color("gray"))
+  )
 }
 
 
