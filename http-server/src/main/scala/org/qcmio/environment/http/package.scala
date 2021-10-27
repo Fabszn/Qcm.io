@@ -1,16 +1,19 @@
 package org.qcmio.environment
 
 import cats.Applicative
-import cats.data.Kleisli
+import cats.data.{Kleisli, OptionT}
 import io.circe.Encoder
+import org.http4s.CharsetRange.*
 import org.http4s.circe.jsonEncoderOf
 import org.http4s.util.CaseInsensitiveString
 import org.http4s.{EntityEncoder, Request}
 import org.qcmio.Keys
 import org.qcmio.auth.{AuthenticatedUser, NoAuthorizedUser, User}
+import org.qcmio.environment.Environments.AppEnvironment
 import org.qcmio.environment.config.Configuration.JwtConf
 import org.qcmio.environment.http.jwt.JwtUtils
-import zio.Task
+import zio.{RIO, Task}
+import zio.interop.catz._
 
 package object http {
 
@@ -20,10 +23,14 @@ package object http {
   ): EntityEncoder[F, A] =
     jsonEncoderOf[F, A]
 
-  def authUser(conf: JwtConf): Kleisli[Task, Request[Task], User] =
-    Kleisli(
+  type ServerRIO[A] = RIO[AppEnvironment, A]
+
+
+  //def authUser(conf: JwtConf): Kleisli[OptionT[Task,_<:User], Request[Task], _ <: User] =
+  def authUser(conf: JwtConf): Kleisli[OptionT[Task, *], Request[Task], User] =
+  Kleisli(
       r =>
-        Task[User](
+        OptionT.liftF(Task[User](
           r.headers
             .get(CaseInsensitiveString(Keys.tokenHeader))
             .map { token =>
@@ -35,7 +42,7 @@ package object http {
               }
             }
             .getOrElse(NoAuthorizedUser)
-        )
+        ))
     )
 
 }
