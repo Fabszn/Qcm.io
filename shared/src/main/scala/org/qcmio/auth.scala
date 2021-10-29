@@ -8,7 +8,7 @@ object auth {
 
   trait User
   case class AuthenticatedUser(login:String) extends User
-  case object NoAuthorizedUser extends User
+  case class NoAuthorizedUser(login:String) extends User
 
   final case class LoginInfo(login:String, mdp:String)
 
