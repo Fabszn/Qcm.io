@@ -3,20 +3,16 @@ package http.server
 import cats.data.Kleisli
 import cats.effect.{Blocker, ExitCode => CatsExitCode}
 import cats.implicits._
-import org.http4s.dsl.io.NonAuthoritativeInformation
 import org.http4s.implicits._
-import org.http4s.server.Router
+import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.staticcontent.WebjarService.Config
 import org.http4s.server.staticcontent.{ResourceService, resourceService, webjarService}
-import org.http4s.util.CaseInsensitiveString
 import org.http4s.{Request, Response}
-import org.qcmio.Keys
-import org.qcmio.auth.User
+import org.qcmio.auth.AuthenticatedUser
 import org.qcmio.environment.Environments.{AppEnvironment, appEnvironment}
 import org.qcmio.environment.config.Configuration.{HttpConf, JwtConf}
 import org.qcmio.environment.http._
-import org.qcmio.environment.http.jwt.JwtUtils
 import zio._
 import zio.internal.Executor
 import zio.interop.catz._
@@ -46,8 +42,10 @@ object QcmIOApp extends zio.App {
 
 
 
+
   def initRoutes(exec:Executor,conf:JwtConf): Kleisli[ServerRIO, Request[ServerRIO], Response[ServerRIO]] = {
-    val questionEndpoint = new QuestionsEndpoint[AppEnvironment].routes
+    val middleware: AuthMiddleware[ServerRIO, AuthenticatedUser] = AuthMiddleware[ServerRIO, AuthenticatedUser](authUser(conf))
+    val questionEndpoint = new QuestionsEndpoint[AppEnvironment].routes(middleware)
     val adminEndpoint = new AdminEndpoint[AppEnvironment].routes
     val loginEndpoint = new LoginEndpoint[AppEnvironment](conf).httpRoutes
 

@@ -26,6 +26,9 @@ object model {
 
   object Question {
     final case class Id(value: Long)      extends AnyVal
+    object Id{
+      implicit  val idDecoder: Decoder[Question.Id] = deriveDecoder[Question.Id]
+    }
     final case class Label(value: String) extends AnyVal
     object Label{
       implicit  val labelDecoder: Decoder[Label] = deriveDecoder[Label]

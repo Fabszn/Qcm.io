@@ -2,10 +2,11 @@ package org.qcmio.environment.http
 
 import io.circe.generic.auto._
 import io.circe.syntax._
-import org.http4s.HttpRoutes
+import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.Router
+import org.http4s.server.{AuthMiddleware, Router}
+import org.qcmio.auth.AuthenticatedUser
 import org.qcmio.environment.repository.QuestionRepository
 import org.qcmio.environment.repository.QuestionsRepository.question
 import org.qcmio.model.Question
@@ -17,10 +18,10 @@ import scala.util.Try
 
 final class QuestionsEndpoint[R <: QuestionRepository] {
 
-  type QuestionTask[A] = RIO[R, A]
+  type Task[A] = RIO[R, A]
 
 
-  val dsl = Http4sDsl[QuestionTask]
+  val dsl = Http4sDsl[Task]
 
   import dsl._
 
@@ -35,28 +36,28 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
     }
   }
 
-  private val httpRoutes = HttpRoutes.of[QuestionTask] {
-    case GET -> Root / QuestionIdVar(id) =>
+  private val httpRoutes = AuthedRoutes.of[AuthenticatedUser,Task] {
+    case GET -> Root / QuestionIdVar(id) as user=>
       question.getQuestion(id) >>=  {
         case Some(e) => Ok(e)
         case None => NotFound()
       }
-    case req@POST -> Root =>
+    case authReq@POST -> Root as user =>
       for {
-        lbl <- req.as[Question.Label]
+        lbl <- authReq.req.as[Question.Label]
         res <- question.saveQuestion(lbl)
         json <- Created(res.asJson)
       } yield json
-    case req@PUT -> Root / QuestionIdVar(id) =>
+    case authReq@PUT -> (Root / QuestionIdVar(id)) as user=>
       for {
-        lbl <- req.as[Question.Label]
+        lbl <- authReq.req.as[Question.Label]
         res <- question.updateQuestion(id,lbl)
         json <- Created(res.asJson)
       } yield json
   }
 
-  val routes: HttpRoutes[QuestionTask] = Router[QuestionTask](
-    prefixPath -> httpRoutes
+  def routes(middleware:AuthMiddleware[Task, AuthenticatedUser]): HttpRoutes[Task] = Router(
+    prefixPath -> middleware(httpRoutes)
   )
 
 }

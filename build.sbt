@@ -43,6 +43,7 @@ lazy val fronWebJar = front.webjar
 
 lazy val http = (project in file("http-server"))
   .enablePlugins(SbtWeb,JavaAppPackaging, DockerPlugin, DockerComposePlugin)
+
   .settings(
     maintainer := "fabszn@protonmail.com",
     scalaJSProjects := Seq(front),
@@ -57,8 +58,9 @@ lazy val http = (project in file("http-server"))
       logback,
       pureConfig,
         scalaJwt,
-      scalaTest
-    ) ++ circle ++ doobie
+      scalaTest,
+    ) ++ circle ++ doobie,
+      addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
   )
   .dependsOn(shared.jvm,fronWebJar)
 

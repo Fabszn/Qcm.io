@@ -1,21 +1,28 @@
 package org.qcmio
 
-import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import io.circe.{Decoder, Encoder}
 
 
 object auth {
 
-  trait User
-  case class AuthenticatedUser(login:String) extends User
-  case object NoAuthorizedUser extends User
 
-  final case class LoginInfo(login:String, mdp:String)
+  sealed trait Role
+
+  case object Administrateur extends Role
+
+  case object Student extends Role
 
 
-  object LoginInfo{
-    implicit  val labelDecoder: Decoder[LoginInfo] = deriveDecoder[LoginInfo]
-    implicit  val labelEncoder: Encoder[LoginInfo] = deriveEncoder[LoginInfo]
+  case class AuthenticatedUser(login: String, role: Role = Student)
+
+
+  final case class LoginInfo(login: String, mdp: String)
+
+
+  object LoginInfo {
+    implicit val labelDecoder: Decoder[LoginInfo] = deriveDecoder[LoginInfo]
+    implicit val labelEncoder: Encoder[LoginInfo] = deriveEncoder[LoginInfo]
   }
 
 }
