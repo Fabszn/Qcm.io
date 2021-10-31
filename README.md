@@ -31,5 +31,19 @@
         sbt http/run
 
 
+# MVP 
 
+first purpose is to enable to students to attend an exam.
+
+To achieve this target, I need the following points :
+
+ - Add an question
+ - Add reponse to a question
+ - add question  to an exam
+ - add Student
+ - add student to an exam
+ - When user log in to app, Student can see its questions
+ - Student can answer to one question 
+
+ **All these features, implie both APIs and UI** 
 

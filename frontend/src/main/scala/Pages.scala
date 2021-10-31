@@ -5,7 +5,7 @@ import com.raquo.airstream.web.AjaxEventStream.AjaxStreamError
 import com.raquo.laminar.api.L._
 import io.circe.syntax._
 import org.qcmio.Keys
-import org.qcmio.auth.{LoginInfo, User}
+import org.qcmio.auth.{LoginInfo}
 import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
 import org.scalajs.dom
 
