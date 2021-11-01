@@ -18,7 +18,9 @@ private[repository] class QcmIODBContext extends DoobieContext.Postgres(SnakeCas
 
   val questionTable = quote(querySchema[Question]("t_question", _.id -> "pkid_question"))
 
-  val reponseTable = quote(querySchema[Reponse]("t_reponse", _.id -> "pkid_reponse"))
+  val reponseTable = quote(querySchema[Reponse]("t_reponse",
+    _.id -> "pkid_reponse",
+    _.questionId -> "fkid_question"))
 
   val candidatTable = quote(querySchema[Candidat]("t_candidat", _.id -> "pkid_candidat"))
 

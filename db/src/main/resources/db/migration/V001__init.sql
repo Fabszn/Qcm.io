@@ -13,6 +13,7 @@ CREATE TABLE t_reponse (
 pkid_reponse INT CONSTRAINT pk_reponse PRIMARY KEY,
 fkid_question INT not null,
 label varchar not null,
+is_correct boolean not null,
 CONSTRAINT fk_question foreign key(fkid_question) REFERENCES t_question(pkid_question)
 );
 

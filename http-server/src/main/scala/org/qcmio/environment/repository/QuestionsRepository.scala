@@ -39,13 +39,30 @@ object QuestionsRepository {
       RIO.accessM(_.get.updateQuestion(id, label))
   }
 
+  object reponse {
+    def saveReponse(r: Reponse): RIO[QuestionRepository, Long] =
+      RIO.accessM(_.get.saveReponse(r))
+
+    def getReponse(id: Reponse.Id): RIO[QuestionRepository, Option[Reponse]] =
+      RIO.accessM(_.get.getReponse(id))
+
+    def updateReponse(id: Reponse.Id, reponse: Reponse): RIO[QuestionRepository, Long] =
+      RIO.accessM(_.get.updateReponse(id, reponse))
+  }
+
   private[repository] final case class QuestionsRepository(resource: DbTransactor.Resource) extends Service with DBContext {
 
     import ctx._
     import resource._
 
     def getQuestion(id: Question.Id): Task[Option[Question]] = {
-      run(quote(questionTable.filter(_.id == lift(id)))).transact(xa).map(_.headOption)
+      (for {
+       question <-  run(quote(questionTable.filter(_.id == lift(id)))).map(_.headOption)
+       reponses <- question.fold(Task(List.empty[Reponse]))(q =>
+         run(quote(reponseTable.filter(_.questionId == lift(q.id))))
+       )
+
+      }yield question).transact(xa)
     }
 
     override def updateQuestion(id: Question.Id, label: Question.Label): Task[Long] =
@@ -69,6 +86,8 @@ object QuestionsRepository {
       run(quote(reponseTable.filter(_.id == lift(id)))).transact(xa).map(_.headOption)
 
     override def updateReponse(id: Reponse.Id, reponse: Reponse): Task[Long] = ???
+
+
   }
 
 }
