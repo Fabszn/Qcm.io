@@ -6,16 +6,16 @@ import io.circe.{Decoder, Encoder}
 import io.circe.generic.auto._
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.syntax._
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.{AuthedRoutes, HttpRoutes, Response}
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
 import org.qcmio.auth.AuthenticatedUser
 import org.qcmio.environment.repository.QuestionRepository
 import org.qcmio.environment.repository.QuestionsRepository.{question, reponse}
-import org.qcmio.httpModel.HttpReponse
+import org.qcmio.model.{HttpQuestion, HttpReponse}
 import org.qcmio.model
-import org.qcmio.model.Question
+import org.qcmio.model.{Question, Reponse}
 import zio.RIO
 import zio.interop.catz._
 
@@ -42,20 +42,18 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
     }
   }
 
+  import io.scalaland.chimney.dsl._
+
   private val httpRoutes = AuthedRoutes.of[AuthenticatedUser,Task] {
     case GET -> Root / QuestionIdVar(id) as user=>
-
-      for{
-         <- OptionT(question.getQuestion(id))
+     (for{
+         q <- OptionT(question.getQuestion(id))
         reponses <- OptionT.liftF(question.getReponsesByQuestionId(id))
 
-      } yield question
-
-      ???
-      /*question.getReponsesByQuestionId(id) >>=  {
-        case Some(e) => Ok(e)
+      } yield (q,reponses)).value >>=  {
+        case Some((q,rs)) => Ok((q,rs))
         case None => NotFound()
-      }*/
+      }
     case authReq@POST -> Root  / "reponse" as user =>
       for {
         rep <- authReq.req.as[HttpReponse]
