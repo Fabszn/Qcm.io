@@ -1,5 +1,6 @@
 package org.qcmio.environment.http
 
+import cats.data.OptionT
 import io.circe.Decoder.Result
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.auto._
@@ -12,8 +13,9 @@ import org.http4s.server.{AuthMiddleware, Router}
 import org.qcmio.auth.AuthenticatedUser
 import org.qcmio.environment.repository.QuestionRepository
 import org.qcmio.environment.repository.QuestionsRepository.{question, reponse}
+import org.qcmio.httpModel.HttpReponse
 import org.qcmio.model
-import org.qcmio.model.{HttpReponse, Question}
+import org.qcmio.model.Question
 import zio.RIO
 import zio.interop.catz._
 
@@ -42,10 +44,18 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
 
   private val httpRoutes = AuthedRoutes.of[AuthenticatedUser,Task] {
     case GET -> Root / QuestionIdVar(id) as user=>
-      question.getQuestion(id) >>=  {
+
+      for{
+         <- OptionT(question.getQuestion(id))
+        reponses <- OptionT.liftF(question.getReponsesByQuestionId(id))
+
+      } yield question
+
+      ???
+      /*question.getReponsesByQuestionId(id) >>=  {
         case Some(e) => Ok(e)
         case None => NotFound()
-      }
+      }*/
     case authReq@POST -> Root  / "reponse" as user =>
       for {
         rep <- authReq.req.as[HttpReponse]

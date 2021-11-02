@@ -9,6 +9,7 @@
     ZIO (https://zio.dev)
     Doobie (https://tpolecat.github.io/doobie/)
     Quill (https://getquill.io/)
+    Chimney (https://github.com/scalalandio/chimney)
 ## Frontend   
     ScalaJs 
     Laminar (http://Laminar.dev/)

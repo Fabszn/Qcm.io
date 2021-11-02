@@ -1,5 +1,6 @@
 package org.qcmio.environment.repository
 
+import cats.data.OptionT
 import doobie.implicits._
 import org.qcmio.model.{Question, Reponse}
 import zio.interop.catz._
@@ -26,6 +27,8 @@ object QuestionsRepository {
 
     def updateReponse(id: Reponse.Id, reponse: Reponse): Task[Long]
 
+    def getReponsesByQuestionId(id: Question.Id): Task[Seq[Reponse]]
+
   }
 
   object question {
@@ -37,17 +40,22 @@ object QuestionsRepository {
 
     def updateQuestion(id: Question.Id, label: Question.Label): RIO[QuestionRepository, Long] =
       RIO.accessM(_.get.updateQuestion(id, label))
+
+    def getReponsesByQuestionId(id: Question.Id): RIO[QuestionRepository,Seq[Reponse]] = {
+      RIO.accessM(_.get.getReponsesByQuestionId(id))
+    }
   }
 
   object reponse {
     def saveReponse(r: Reponse): RIO[QuestionRepository, Long] =
-      RIO.accessM(_.get.saveReponse(r))
+    RIO.accessM(_.get.saveReponse(r))
 
     def getReponse(id: Reponse.Id): RIO[QuestionRepository, Option[Reponse]] =
-      RIO.accessM(_.get.getReponse(id))
+    RIO.accessM(_.get.getReponse(id))
 
     def updateReponse(id: Reponse.Id, reponse: Reponse): RIO[QuestionRepository, Long] =
-      RIO.accessM(_.get.updateReponse(id, reponse))
+    RIO.accessM(_.get.updateReponse(id, reponse))
+
   }
 
   private[repository] final case class QuestionsRepository(resource: DbTransactor.Resource) extends Service with DBContext {
@@ -55,20 +63,21 @@ object QuestionsRepository {
     import ctx._
     import resource._
 
-    def getQuestion(id: Question.Id): Task[Option[Question]] = {
+    def getQuestion(id: Question.Id): Task[Option[Question]] =
       (for {
        question <-  run(quote(questionTable.filter(_.id == lift(id)))).map(_.headOption)
-       reponses <- question.fold(Task(List.empty[Reponse]))(q =>
-         run(quote(reponseTable.filter(_.questionId == lift(q.id))))
-       )
-
       }yield question).transact(xa)
-    }
+
+    def getReponsesByQuestionId(id: Question.Id): Task[Seq[Reponse]] =
+      (for {
+       reps <- run(quote(reponseTable.filter(_.questionId == lift(id))))
+      }yield reps.toSeq).transact(xa)
+
 
     override def updateQuestion(id: Question.Id, label: Question.Label): Task[Long] =
       run(quote(questionTable.filter(q => q.id == lift(id)).update(_.label -> lift(label)))).transact(xa)
 
-    def saveQuestion(label: Question.Label): Task[Long] =
+    override def saveQuestion(label: Question.Label): Task[Long] =
       (for {
         idQuestion <- run(nextQuestionId)
         nbLin <- run(quote {

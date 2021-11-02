@@ -2,6 +2,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.qcmio.model.{HttpReponse, Question, Reponse}
 import io.circe.parser._
 import io.circe.syntax._
+import org.qcmio.httpModel
 
 class JsonTest extends AnyWordSpec{
 
@@ -23,13 +24,13 @@ class JsonTest extends AnyWordSpec{
       parse(jsonString)
         .fold(fail(_), v => {
           println(v)
-          assert(v.as[HttpReponse].isRight)})
+          assert(v.as[httpModel.HttpReponse].isRight)})
 
     }
 
   "Json should generate Json" in {
 
-val hr = HttpReponse(id=None, idQuestion = Question.Id(1),label=Reponse.Label("erze"), isCorrect = Reponse.IsCorrect(true))
+val hr = httpModel.HttpReponse(id=None, idQuestion = Question.Id(1),label=Reponse.Label("erze"), isCorrect = Reponse.IsCorrect(true))
 
     println(hr.asJson)
     }

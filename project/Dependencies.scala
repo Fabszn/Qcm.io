@@ -19,6 +19,7 @@ object Dependencies {
     lazy val upickle = "1.3.13"
     lazy val scalaJwt = "9.0.2"
     lazy val scalaTest = "3.2.10"
+    lazy val chimneyVersion = "0.6.1"
   }
 
   lazy val scalaJwt = "com.github.jwt-scala" %% "jwt-circe" % Version.scalaJwt
@@ -39,6 +40,7 @@ object Dependencies {
   )
 
 
+lazy val chimney = "io.scalaland" %% "chimney" % chimneyVersion
 
   lazy val zio = "dev.zio" %% "zio" % zioVersion
   lazy val http4sBlazeServer =

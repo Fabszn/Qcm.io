@@ -59,6 +59,7 @@ lazy val http = (project in file("http-server"))
       pureConfig,
         scalaJwt,
       scalaTest,
+      chimney
     ) ++ circle ++ doobie,
       addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
   )
