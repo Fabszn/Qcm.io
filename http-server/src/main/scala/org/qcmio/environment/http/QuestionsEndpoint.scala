@@ -13,6 +13,7 @@ import org.http4s.server.{AuthMiddleware, Router}
 import org.qcmio.auth.AuthenticatedUser
 import org.qcmio.environment.repository.QuestionRepository
 import org.qcmio.environment.repository.QuestionsRepository.{question, reponse}
+import org.qcmio.environment.utils.Mapper.mapper
 import org.qcmio.model.{HttpQuestion, HttpReponse}
 import org.qcmio.model
 import org.qcmio.model.{Question, Reponse}
@@ -42,8 +43,6 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
     }
   }
 
-  import io.scalaland.chimney.dsl._
-
   private val httpRoutes = AuthedRoutes.of[AuthenticatedUser,Task] {
     case GET -> Root / QuestionIdVar(id) as user=>
      (for{
@@ -51,7 +50,7 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
         reponses <- OptionT.liftF(question.getReponsesByQuestionId(id))
 
       } yield (q,reponses)).value >>=  {
-        case Some((q,rs)) => Ok((q,rs))
+        case Some((q,rs)) => Ok(mapper(q,rs))
         case None => NotFound()
       }
     case authReq@POST -> Root  / "reponse" as user =>
