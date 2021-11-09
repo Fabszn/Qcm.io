@@ -10,20 +10,16 @@ import org.http4s.server.Router
 
 final class AdminEndpoint[R] {
 
-
-  type AdminTask[A] = RIO[R, A]
-
-
-  val dsl: Http4sDsl[AdminTask] = Http4sDsl[AdminTask]
+  val dsl: Http4sDsl[QTask] = Http4sDsl[QTask]
 
   import dsl._
 
 private val prefixPath = "/admin"
-  private val httpRoutes: HttpRoutes[AdminTask] = HttpRoutes.of[AdminTask] {
+  private val httpRoutes: HttpRoutes[QTask] = HttpRoutes.of[QTask] {
     case GET -> Root   => Ok("Ok  admin!")
   }
 
-  val routes: HttpRoutes[AdminTask] = Router[AdminTask](
+  val routes: HttpRoutes[QTask] = Router[QTask](
     prefixPath -> httpRoutes
   )
 

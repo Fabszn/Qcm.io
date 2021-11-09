@@ -5,9 +5,10 @@ import com.raquo.airstream.web.AjaxEventStream.AjaxStreamError
 import com.raquo.laminar.api.L._
 import io.circe.syntax._
 import org.qcmio.Keys
-import org.qcmio.auth.{LoginInfo}
-import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
+import org.qcmio.auth.LoginInfo
+import org.qcmio.front.QcmioRouter.HomePage
 import org.scalajs.dom
+import org.scalajs.dom.console
 
 
 object Pages extends WithGlobalState {
@@ -15,9 +16,6 @@ object Pages extends WithGlobalState {
   case class LoginState(login: String = "", mdp: String = "")
 
   case class QcmState(token: Option[String] = None)
-
-
-
 
 
   val stateVar = Var(LoginState(login = "Michel", mdp = "toto"))
@@ -36,10 +34,7 @@ object Pages extends WithGlobalState {
   val pwdWriter = stateVar.updater[String]((state, pass) => state.copy(mdp = pass))
 
 
-  def loginPage(gState:QCMGlobalState) = div(
-    p(
-      input(value <-- gState.signal.map(_.token.getOrElse("no tokeken")))
-    ),
+  def loginPage(gState: QCMGlobalState) = div(
     cls := QcmIoCss.loginForm.className.value,
     renderInputRow(
       label("Login: "),
@@ -63,29 +58,41 @@ object Pages extends WithGlobalState {
     p(
       button(
         "Submit",
-        composeEvents(onClick)(_.flatMap( _ => {
+        composeEvents(onClick)(_.flatMap(_ => {
           AjaxEventStream
-          .post(s"${Configuration.backendUrl}/api/login", LoginInfo(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString())
-          .map(r => {
-            dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
-            r.getResponseHeader(Keys.tokenHeader)
-          }).recover {
-            case err: AjaxStreamError => Some(err.getMessage)
-          }})) --> ((t:String) =>  gState.update(_.copy(token = Some(t)))).andThen(_ => QcmioRouter.router.pushState(HomePage))
+            .post(s"${Configuration.backendUrl}/api/login", LoginInfo(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString())
+            .map(r =>{
+                  dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
+                  r.getResponseHeader(Keys.tokenHeader)
+        }).recover {
+            case err: AjaxStreamError => {
+              console.log(err.getMessage)
+              Some(err.getMessage)
+            }
+          }
+        })) --> (
+          (t: String) => {
+            gState.update(_.copy(token = Some(t)))
+            t
+          }
+          ).andThen(e => {
+          console.log(s"message $e")
+          QcmioRouter.router.pushState(HomePage)
+        })
 
       )
     )
 
   )
 
-  def homePage(gstate:QCMGlobalState) = div(header)
+  def homePage(gstate: QCMGlobalState) = div(
+
+    header
+
+  )
 
 
-
-
-
-
-  val header = div(cls := QcmIoCss.headerCss.className.value,"Header")
+  val header = div(cls := QcmIoCss.headerCss.className.value, "Header")
   //val header = div(cls := QcmIoCss.headerCss.className.value,"Header")
 
 }

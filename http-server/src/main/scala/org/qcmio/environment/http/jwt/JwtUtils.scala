@@ -1,14 +1,14 @@
 package org.qcmio.environment.http.jwt
 
 import org.qcmio.environment.config.Configuration.JwtConf
-import org.qcmio.model.Candidat
+import org.qcmio.model.User
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 
 import java.time.Instant
 
 object JwtUtils {
 
-  def buildToken(email: Candidat.Email, conf: JwtConf): String = {
+  def buildToken(email: User.Email, conf: JwtConf): String = {
 
     val claim = JwtClaim(
       expiration = Some(Instant.now.plusSeconds(10800).getEpochSecond)

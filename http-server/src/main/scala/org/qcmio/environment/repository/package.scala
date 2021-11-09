@@ -1,11 +1,10 @@
 package org.qcmio.environment
 
-import cats.effect
 import cats.effect.Blocker
 import doobie.hikari.HikariTransactor
 import org.qcmio.environment.config.Configuration
 import org.qcmio.environment.config.Configuration.getDbConf
-import org.qcmio.model.Question
+
 import zio._
 import zio.blocking.Blocking
 import zio.interop.catz._
@@ -14,7 +13,8 @@ package object repository {
 
   type DbTransactor = Has[DbTransactor.Resource]
   type QuestionRepository = Has[QuestionsRepository.Service]
-  type CandidatRepository = Has[CandidatsRepository.Service]
+  type UserRepository = Has[UsersRepository.Service]
+  type AdministratorRepository = Has[AdminRepository.Service]
 
 
 

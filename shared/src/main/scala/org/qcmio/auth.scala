@@ -10,7 +10,6 @@ object auth {
   sealed trait Role
 
   case object Administrateur extends Role
-
   case object Student extends Role
 
 

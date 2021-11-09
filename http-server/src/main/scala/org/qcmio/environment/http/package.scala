@@ -16,23 +16,21 @@ import zio.RIO
 
 package object http {
 
+
+  type ServerRIO[A] = RIO[AppEnvironment, A]
+  type OT[A] = OptionT[ServerRIO, A]
+  type QTask[A] = RIO[AppEnvironment, A]
+
   implicit def jsonEncoder[F[_] : Applicative, A](
                                                    implicit
                                                    encoder: Encoder[A]
                                                  ): EntityEncoder[F, A] =
     jsonEncoderOf[F, A]
 
-  type ServerRIO[A] = RIO[AppEnvironment, A]
-  type OT[A] = OptionT[ServerRIO, A]
-
-
-
-
   def authUser(conf: JwtConf): Kleisli[OT, Request[ServerRIO], AuthenticatedUser] =
     Kleisli(
       r =>
         OptionT(
-
           RIO {
             r.headers
               .get(CaseInsensitiveString(Keys.tokenHeader))

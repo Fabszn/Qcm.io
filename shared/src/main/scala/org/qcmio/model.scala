@@ -2,8 +2,8 @@ package org.qcmio
 
 import io.circe.generic.semiauto._
 import io.circe.{Decoder, Encoder}
-import org.qcmio.model.Account.LastConnexionDate
-import org.qcmio.model.Question
+import org.qcmio.auth.Role
+import org.qcmio.model.Account.{LastConnexionDate, Password}
 import org.qcmio.model.Reponse.IsCorrect
 
 import java.time.ZonedDateTime
@@ -67,14 +67,14 @@ object model {
 
   }
 
-  final case class Candidat(
-                             id: Candidat.Id,
-                             prenom: Candidat.Prenom,
-                             nom: Candidat.Nom,
-                             email: Candidat.Email
+  final case class User(
+                         id: User.Id,
+                         prenom: User.Prenom,
+                         nom: User.Nom,
+                         email: User.Email
                            )
 
-  object Candidat {
+  object User {
     final case class Id(value: Long) extends AnyVal
 
     final case class Nom(value: String) extends AnyVal
@@ -91,17 +91,16 @@ object model {
     final case class Mdp(value: String) extends AnyVal
   }
 
-  final case class Account(id: Account.Id, idCandidat: Candidat.Id, lastConnexion: LastConnexionDate)
+  final case class Account(id: Account.Id, idUser: User.Id, lastConnexion: LastConnexionDate, mdp:Password)
 
   object Account {
     final case class Id(value: Long) extends AnyVal
 
     final case class LastConnexionDate(value: ZonedDateTime) extends AnyVal
 
+    final case class Password(value:String) extends AnyVal
+
   }
-
-
-
 
 
   final case class HttpReponse(
@@ -124,7 +123,7 @@ object model {
 
   object HttpQuestion {
     implicit val hqDecoder: Decoder[HttpQuestion] = deriveDecoder[HttpQuestion]
-   // implicit val hqEncoder: Encoder[HttpQuestion] = deriveEncoder[HttpQuestion]
+    // implicit val hqEncoder: Encoder[HttpQuestion] = deriveEncoder[HttpQuestion]
   }
 
 

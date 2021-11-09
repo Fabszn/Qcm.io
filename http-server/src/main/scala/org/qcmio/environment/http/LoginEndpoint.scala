@@ -8,26 +8,26 @@ import org.qcmio.Keys
 import org.qcmio.auth.LoginInfo
 import org.qcmio.environment.config.Configuration.JwtConf
 import org.qcmio.environment.http.jwt.JwtUtils
-import org.qcmio.model.Candidat
+import org.qcmio.environment.repository.AdminRepository.admin
+import org.qcmio.environment.repository.{AdministratorRepository, QuestionRepository}
+import org.qcmio.model.User
 import org.slf4j.LoggerFactory
 import zio.interop.catz._
-import zio.{RIO, Task}
+import zio.Task
 
-final class LoginEndpoint[R](jwtConf: JwtConf) {
+final class LoginEndpoint[R <: QuestionRepository](jwtConf: JwtConf) {
   private val logger = LoggerFactory.getLogger("LoginEndpoint")
 
-  type LoginTask[A] = RIO[R, A]
-
-  private val dsl = Http4sDsl[LoginTask]
+  private val dsl = Http4sDsl[QTask]
 
   import dsl._
 
-  val httpRoutes: HttpRoutes[LoginTask] = HttpRoutes.of[LoginTask] {
+  val httpRoutes = HttpRoutes.of[QTask] {
     case req @ POST -> Root / "login" =>
       for {
         info <- req.as[LoginInfo]
-        _ = { logger.debug(s"login info ${info}") }
-        rep <- Ok(s"Logged ${info.login}", Header(Keys.tokenHeader, JwtUtils.buildToken(Candidat.Email(info.login), jwtConf)))
+        user <- admin.authUser(info.login, info.mdp)
+        rep <- user.fold(Forbidden("unAuthorized access")){user => Ok(s"Logged ", Header(Keys.tokenHeader, JwtUtils.buildToken(user.email, jwtConf)))}
       } yield {
         rep
       }

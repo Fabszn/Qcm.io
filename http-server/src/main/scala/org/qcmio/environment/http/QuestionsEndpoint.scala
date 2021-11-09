@@ -1,12 +1,9 @@
 package org.qcmio.environment.http
 
 import cats.data.OptionT
-import io.circe.Decoder.Result
-import io.circe.{Decoder, Encoder}
 import io.circe.generic.auto._
-import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.syntax._
-import org.http4s.{AuthedRoutes, HttpRoutes, Response}
+import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
@@ -14,10 +11,9 @@ import org.qcmio.auth.AuthenticatedUser
 import org.qcmio.environment.repository.QuestionRepository
 import org.qcmio.environment.repository.QuestionsRepository.{question, reponse}
 import org.qcmio.environment.utils.Mapper.mapper
-import org.qcmio.model.{HttpQuestion, HttpReponse}
+import org.qcmio.model.HttpReponse
 import org.qcmio.model
-import org.qcmio.model.{Question, Reponse}
-import zio.RIO
+import org.qcmio.model.Question
 import zio.interop.catz._
 
 import scala.util.Try
@@ -25,10 +21,7 @@ import scala.util.Try
 
 final class QuestionsEndpoint[R <: QuestionRepository] {
 
-  type Task[A] = RIO[R, A]
-
-
-  val dsl = Http4sDsl[Task]
+  val dsl = Http4sDsl[QTask]
 
   import dsl._
 
@@ -43,12 +36,11 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
     }
   }
 
-  private val httpRoutes = AuthedRoutes.of[AuthenticatedUser,Task] {
+  private val httpRoutes = AuthedRoutes.of[AuthenticatedUser,QTask] {
     case GET -> Root / QuestionIdVar(id) as user=>
      (for{
          q <- OptionT(question.getQuestion(id))
         reponses <- OptionT.liftF(question.getReponsesByQuestionId(id))
-
       } yield (q,reponses)).value >>=  {
         case Some((q,rs)) => Ok(mapper(q,rs))
         case None => NotFound()
@@ -74,7 +66,7 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
       } yield json
   }
 
-  def routes(middleware:AuthMiddleware[Task, AuthenticatedUser]): HttpRoutes[Task] = Router(
+  def routes(middleware:AuthMiddleware[QTask, AuthenticatedUser]): HttpRoutes[QTask] = Router(
     prefixPath -> middleware(httpRoutes)
   )
 

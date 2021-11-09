@@ -1,6 +1,5 @@
 package org.qcmio.environment.repository
 
-import cats.data.OptionT
 import doobie.implicits._
 import org.qcmio.model.{Question, Reponse}
 import zio.interop.catz._
