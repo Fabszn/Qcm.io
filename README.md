@@ -31,6 +31,17 @@
     2 - App
         sbt http/run
 
+# build and publish image
+
+## build image
+
+    sbt http/docker:publishLocal
+
+## publish 
+
+    1) docker login registry.gitlab.com
+    2) docker push registry.gitlab.com/fabszn/qcm.io
+
 
 # MVP 
 

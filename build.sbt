@@ -46,6 +46,9 @@ lazy val http = (project in file("http-server"))
 
   .settings(
     maintainer := "fabszn@protonmail.com",
+    packageName in Docker := "qcm.io",
+    dockerUsername in Docker := Some("registry.gitlab.com/fabszn"),
+    version in Docker := "latest",
     scalaJSProjects := Seq(front),
     Assets / pipelineStages := Seq(scalaJSPipeline),
     Compile / compile := ((Compile / compile) dependsOn scalaJSPipeline).value,

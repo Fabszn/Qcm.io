@@ -34,3 +34,7 @@ mdp varchar not null,
 last_connexion_date timestamp with time zone not null default now(),
 CONSTRAINT fk_user foreign key(fkid_user) REFERENCES t_user(pkid_user)
 );
+
+-- default user
+insert into t_user values(1, 'Sznajderman','fabrice','fabszn@protonmail.com','Administrateur');
+insert into t_account values(1,1,'toto');

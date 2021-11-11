@@ -41,9 +41,9 @@ object QcmioMain {
           .map(r =>
            r.status
           ).recover{
-          case e:AjaxStatusError => {
+          case e:AjaxStatusError =>
             QcmioRouter.router.pushState(LoginPage)
-            Some(e.status)}
+            Some(e.status)
         }.debugLogErrors() --> checkTokenObserver
 
       }
@@ -53,12 +53,6 @@ object QcmioMain {
       initModifier,
       child <-- QcmioRouter.splitter(qcmAppState).$view
     )
-
-
-
-
-
-
 
 
     renderOnDomContentLoaded(container, app)

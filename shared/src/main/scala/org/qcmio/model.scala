@@ -2,7 +2,6 @@ package org.qcmio
 
 import io.circe.generic.semiauto._
 import io.circe.{Decoder, Encoder}
-import org.qcmio.auth.Role
 import org.qcmio.model.Account.{LastConnexionDate, Password}
 import org.qcmio.model.Reponse.IsCorrect
 
@@ -10,6 +9,8 @@ import java.time.ZonedDateTime
 
 object model {
 
+
+  type QR = (Question,Seq[Reponse])
 
   final case class Question(
                              id: Question.Id = Question.Id(-1),
@@ -123,7 +124,6 @@ object model {
 
   object HttpQuestion {
     implicit val hqDecoder: Decoder[HttpQuestion] = deriveDecoder[HttpQuestion]
-    // implicit val hqEncoder: Encoder[HttpQuestion] = deriveEncoder[HttpQuestion]
   }
 
 
