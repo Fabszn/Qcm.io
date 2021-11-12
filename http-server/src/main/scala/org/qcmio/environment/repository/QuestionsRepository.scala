@@ -1,7 +1,6 @@
 package org.qcmio.environment.repository
 
 import cats.data.OptionT
-import cats.implicits.catsSyntaxFlatMapOps
 import doobie.implicits._
 import org.qcmio.model.{QR, Question, Reponse}
 import zio.interop.catz._
@@ -51,25 +50,25 @@ object QuestionsRepository {
     def updateQuestion(id: Question.Id, label: Question.Label): RIO[QuestionRepository, Long] =
       RIO.accessM(_.get.updateQuestion(id, label))
 
-    def getReponsesByQuestionId(id: Question.Id): RIO[QuestionRepository,Seq[Reponse]] =
+    def getReponsesByQuestionId(id: Question.Id): RIO[QuestionRepository, Seq[Reponse]] =
       RIO.accessM(_.get.getReponsesByQuestionId(id))
 
-    def getQuestionReponses(id: Question.Id): RIO[QuestionRepository,Option[QR]] =
+    def getQuestionReponses(id: Question.Id): RIO[QuestionRepository, Option[QR]] =
       RIO.accessM(_.get.getQuestionReponses(id))
 
-    def getAllQuestionsReponses: RIO[QuestionRepository,Seq[QR]] =
+    def getAllQuestionsReponses: RIO[QuestionRepository, Seq[QR]] =
       RIO.accessM(_.get.getAllQuestionsReponses)
   }
 
   object reponse {
     def saveReponse(r: Reponse): RIO[QuestionRepository, Long] =
-    RIO.accessM(_.get.saveReponse(r))
+      RIO.accessM(_.get.saveReponse(r))
 
     def getReponse(id: Reponse.Id): RIO[QuestionRepository, Option[Reponse]] =
-    RIO.accessM(_.get.getReponse(id))
+      RIO.accessM(_.get.getReponse(id))
 
     def updateReponse(id: Reponse.Id, reponse: Reponse): RIO[QuestionRepository, Long] =
-    RIO.accessM(_.get.updateReponse(id, reponse))
+      RIO.accessM(_.get.updateReponse(id, reponse))
 
   }
 
@@ -80,29 +79,28 @@ object QuestionsRepository {
 
     def getQuestion(id: Question.Id): Task[Option[Question]] =
       (for {
-       question <-  run(quote(questionTable.filter(_.id == lift(id)))).map(_.headOption)
-      }yield question).transact(xa)
+        question <- run(quote(questionTable.filter(_.id == lift(id)))).map(_.headOption)
+      } yield question).transact(xa)
 
     def getQuestionReponses(id: Question.Id): Task[Option[QR]] =
       (for {
-        question <-  OptionT(run(quote(questionTable.filter(_.id == lift(id)))).map(_.headOption))
+        question <- OptionT(run(quote(questionTable.filter(_.id == lift(id)))).map(_.headOption))
         reponses <- OptionT.liftF(run(quote(reponseTable.filter(_.questionId == lift(question.id)))))
-      }yield (question, reponses)).value.transact(xa)
+      } yield (question, reponses)).value.transact(xa)
 
     def getAllQuestionsReponses: Task[Seq[QR]] =
       (for {
-        questions <-  run(quote(questionTable))
+        questions <- run(quote(questionTable))
         reponses <- run(quote(reponseTable))
-      }yield {
+      } yield {
         questions.map(q =>
-          (q,reponses.groupBy(_.questionId)(q.id))
-        )
+          (q, reponses.groupBy(_.questionId).getOrElse(q.id, List.empty[Reponse])))
       }).transact(xa)
 
     def getReponsesByQuestionId(id: Question.Id): Task[Seq[Reponse]] =
       (for {
-       reps <- run(quote(reponseTable.filter(_.questionId == lift(id))))
-      }yield reps).transact(xa)
+        reps <- run(quote(reponseTable.filter(_.questionId == lift(id))))
+      } yield reps).transact(xa)
 
 
     override def updateQuestion(id: Question.Id, label: Question.Label): Task[Long] =

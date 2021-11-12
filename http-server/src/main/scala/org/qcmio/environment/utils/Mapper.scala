@@ -1,6 +1,6 @@
 package org.qcmio.environment.utils
 
-import org.qcmio.model.{HttpQuestion, HttpReponse, QR, Question, Reponse}
+import org.qcmio.model.{HttpQuestion, HttpReponse, HttpSimpleReponse, QR, Question, Reponse}
 
 object Mapper {
 
@@ -10,7 +10,7 @@ object Mapper {
   def mapperOne(question:Question, reponses:Seq[Reponse]):HttpQuestion ={
 
     val hq: HttpQuestion = question.into[HttpQuestion].transform
-    val hrs = reponses.map(_.into[HttpReponse].withFieldRenamed(_.questionId,_.idQuestion).transform)
+    val hrs = reponses.map(_.into[HttpSimpleReponse].withFieldRenamed(_.questionId,_.idQuestion).transform)
 
     hq.copy(reponses = hrs )
   }

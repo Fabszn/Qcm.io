@@ -116,10 +116,21 @@ object model {
     implicit val hrEncoder: Encoder[HttpReponse] = deriveEncoder[HttpReponse]
   }
 
+  final case class HttpSimpleReponse(
+                                id: Option[model.Reponse.Id],
+                                idQuestion: model.Question.Id,
+                                label: model.Reponse.Label
+                              )
+
+  object HttpSimpleReponse {
+    implicit val hrDecoder: Decoder[HttpSimpleReponse] = deriveDecoder[HttpSimpleReponse]
+    implicit val hrEncoder: Encoder[HttpSimpleReponse] = deriveEncoder[HttpSimpleReponse]
+  }
+
 
   final case class HttpQuestion(id: Option[Question.Id] = None,
                                 label: Question.Label,
-                                reponses: Seq[HttpReponse] = Seq.empty[HttpReponse]
+                                reponses: Seq[HttpSimpleReponse] = Seq.empty[HttpSimpleReponse]
                                )
 
   object HttpQuestion {

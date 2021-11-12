@@ -24,6 +24,14 @@ object QcmIoCss extends StyleSheet.Inline {
     backgroundColor(Color("gray")),
     borderColor(Color("gray"))
   )
+
+
+  val questions = style(display.flex,flexDirection.column)
+  val reponses = style(
+    display.flex,
+    flexDirection.column,
+    justifyContent.center
+  )
 }
 
 

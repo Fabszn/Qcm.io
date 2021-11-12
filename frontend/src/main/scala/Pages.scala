@@ -10,7 +10,7 @@ import io.circe.syntax._
 import org.qcmio.Keys
 import org.qcmio.auth.LoginInfo
 import org.qcmio.front.QcmioRouter.HomePage
-import org.qcmio.model.HttpQuestion
+import org.qcmio.model.{HttpQuestion, HttpSimpleReponse}
 import org.scalajs.dom
 import org.scalajs.dom.{console, html}
 
@@ -95,10 +95,25 @@ object Pages extends WithGlobalState {
 
   def homePage(gstate: QCMGlobalState) = div(
     loadQuestions(gstate),
-    header,
-    children <-- questionList.signal.map(_.map(h => div(h.toString)))
+    cls := QcmIoCss.questions.className.value,
+    children <-- questionList.signal.map(_.map(h => displayQuestion(h)))
   )
 
+
+
+  def displayQuestion(httpQuestion:HttpQuestion):Div = {
+      div(
+        httpQuestion.label.value,
+        displayReponses(httpQuestion.reponses)
+      )
+  }
+
+  def displayReponses(reponses:Seq[HttpSimpleReponse]):Div = {
+      div(
+        cls := QcmIoCss.reponses.className.value,
+        reponses.map(r => div(r.label.value))
+      )
+  }
 
   val header: ReactiveHtmlElement[html.Div] = div(cls := QcmIoCss.headerCss.className.value, "Header")
 
