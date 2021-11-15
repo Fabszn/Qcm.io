@@ -21,9 +21,12 @@ lazy val db = (project in file("db"))
   .enablePlugins(FlywayPlugin)
   .settings(
     libraryDependencies += "org.postgresql" % "postgresql" % "42.2.23",
-    flywayUrl                               := "jdbc:postgresql://localhost/qcmio",
+    flywayUrl                               := "jdbc:postgresql://ec2-34-250-19-18.eu-west-1.compute.amazonaws.com/d5b2c9qv4lgkm",
+    flywayUser                              := "tffifyrbukuzai",
+    flywayPassword                          := "070c4efba10a37d0e04f056e3c3a4e6e9e7577fd54e28f97a91de5e543c09f23",
+    /*flywayUrl                               := "jdbc:postgresql://localhost/qcmio",
     flywayUser                              := "qcmio",
-    flywayPassword                          := "qcmiopwd",
+    flywayPassword                          := "qcmiopwd",*/
     flywayLocations += "db/migration"
   )
 
@@ -34,7 +37,7 @@ lazy val front = (project in file("frontend"))
       "com.raquo" %%% "laminar" % Version.laminar,
       "com.github.japgolly.scalacss" %%% "core" % Version.scalaCss,
       "com.raquo" %%% "waypoint" % Version.waypoint,
-      "com.lihaoyi" %%% "upickle" % Version.upickle,
+      "com.lihaoyi" %%% "upickle" % Version.upickle
     ),
     scalaJSUseMainModuleInitializer := true
   ).dependsOn(shared.js)
@@ -46,9 +49,10 @@ lazy val http = (project in file("http-server"))
 
   .settings(
     maintainer := "fabszn@protonmail.com",
-    packageName in Docker := "qcm.io",
-    dockerUsername in Docker := Some("registry.gitlab.com/fabszn"),
-    version in Docker := "latest",
+    Docker  / packageName := "testappqcm",
+    Docker / dockerUsername := Some("registry.heroku.com"),
+    Docker / version   := "latest",
+    Docker / dockerExposedPorts   := Seq(8080),
     scalaJSProjects := Seq(front),
     Assets / pipelineStages := Seq(scalaJSPipeline),
     Compile / compile := ((Compile / compile) dependsOn scalaJSPipeline).value,

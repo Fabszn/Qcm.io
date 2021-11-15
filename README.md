@@ -23,7 +23,7 @@
     Postgres
     Docker
 
-# Start app
+# Start app locally
 
     1 - DB 
         docker-compose up
@@ -37,10 +37,18 @@
 
     sbt http/docker:publishLocal
 
-## publish 
+## publish on gitLab 
 
     1) docker login registry.gitlab.com
     2) docker push registry.gitlab.com/fabszn/qcm.io
+
+## Publish on Heroku
+
+(to be complete) 
+ set env : heroku config:set
+
+generate dockerFile and then use heroku containter:push --app .... web andThen heroku container:release --app ... web
+
 
 
 # MVP 

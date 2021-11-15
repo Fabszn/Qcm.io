@@ -4,7 +4,6 @@ import com.raquo.airstream.web.AjaxEventStream
 import com.raquo.airstream.web.AjaxEventStream.AjaxStreamError
 import com.raquo.laminar.api.L._
 import com.raquo.laminar.nodes.ReactiveHtmlElement
-import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
 import org.qcmio.Keys
@@ -100,19 +99,23 @@ object Pages extends WithGlobalState {
   )
 
 
-
-  def displayQuestion(httpQuestion:HttpQuestion):Div = {
-      div(
-        httpQuestion.label.value,
-        displayReponses(httpQuestion.reponses)
-      )
+  def displayQuestion(httpQuestion: HttpQuestion): Div = {
+    div(
+      httpQuestion.label.value,
+      displayReponses(httpQuestion.reponses)
+    )
   }
 
-  def displayReponses(reponses:Seq[HttpSimpleReponse]):Div = {
-      div(
-        cls := QcmIoCss.reponses.className.value,
-        reponses.map(r => div(r.label.value))
-      )
+  def displayReponses(reponses: Seq[HttpSimpleReponse]): Div = {
+    div(
+      cls := QcmIoCss.reponses.className.value,
+      reponses.grouped(2).map(lotReponses => div(
+        ul(
+          lotReponses.map(r =>
+            li(r.label.value)
+          )
+        ))
+      ).toSeq)
   }
 
   val header: ReactiveHtmlElement[html.Div] = div(cls := QcmIoCss.headerCss.className.value, "Header")

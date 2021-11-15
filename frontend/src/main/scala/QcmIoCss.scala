@@ -29,7 +29,7 @@ object QcmIoCss extends StyleSheet.Inline {
   val questions = style(display.flex,flexDirection.column)
   val reponses = style(
     display.flex,
-    flexDirection.column,
+    flexDirection.row,
     justifyContent.center
   )
 }
