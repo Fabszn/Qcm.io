@@ -7,6 +7,7 @@ import upickle.default._
 import org.scalajs.dom.html.Div
 
 
+
 object QcmioRouter extends WithGlobalState {
 
   sealed trait Page
@@ -33,8 +34,8 @@ object QcmioRouter extends WithGlobalState {
   )
 
   def splitter(gState:QCMGlobalState) = SplitRender[Page, HtmlElement](router.$currentPage)
-    .collectStatic(LoginPage) { Pages.loginPage(gState) }
-    .collectStatic(HomePage) { Pages.homePage(gState) }
+    .collectStatic(LoginPage) { pages.LoginPage.loginPage(gState) }
+    .collectStatic(HomePage) { pages.HomePage.homePage(gState) }
     .collectStatic(EntryPage) { div() }
 
   def renderMainPage(): ReactiveHtmlElement[Div] = {

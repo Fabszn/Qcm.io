@@ -5,6 +5,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.dsl.Http4sDsl
+import org.http4s.server.middleware.CORS
 import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.qcmio.auth.AuthenticatedUser
@@ -47,10 +48,7 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
     case GET -> Root as _ =>
       (for {
         qs <- question.getAllQuestionsReponses
-      } yield mapperAll(qs)) >>= {
-        case Nil => NotFound()
-        case l => Ok(l)
-      }
+      } yield mapperAll(qs)) >>= { l => Ok(l) }
     case authReq@POST -> Root / "reponse" as user =>
       for {
         rep <- authReq.req.as[HttpReponse]

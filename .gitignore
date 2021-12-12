@@ -8,3 +8,4 @@ project/project/metals.sbt
 .DS_Store
 .bsp/
 node_modules/
+.env

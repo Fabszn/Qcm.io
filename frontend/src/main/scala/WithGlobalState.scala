@@ -1,7 +1,7 @@
 package org.qcmio.front
 
 import com.raquo.airstream.state.Var
-import org.qcmio.front.Pages.QcmState
+import pages.HomePage.QcmState
 
 trait WithGlobalState {
 

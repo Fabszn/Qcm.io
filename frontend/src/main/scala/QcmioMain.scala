@@ -4,7 +4,7 @@ import com.raquo.airstream.web.AjaxEventStream
 import com.raquo.airstream.web.AjaxEventStream.AjaxStatusError
 import com.raquo.laminar.api.L._
 import org.qcmio.Keys
-import org.qcmio.front.Pages.QcmState
+import pages.HomePage.QcmState
 import org.qcmio.front.QcmioRouter.{HomePage, LoginPage}
 import org.scalajs.dom
 import scalacss.internal.mutable.GlobalRegistry

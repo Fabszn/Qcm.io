@@ -21,12 +21,12 @@ lazy val db = (project in file("db"))
   .enablePlugins(FlywayPlugin)
   .settings(
     libraryDependencies += "org.postgresql" % "postgresql" % "42.2.23",
-    flywayUrl                               := "jdbc:postgresql://ec2-34-250-19-18.eu-west-1.compute.amazonaws.com/d5b2c9qv4lgkm",
+   /* flywayUrl                               := "jdbc:postgresql://ec2-34-250-19-18.eu-west-1.compute.amazonaws.com/d5b2c9qv4lgkm",
     flywayUser                              := "tffifyrbukuzai",
-    flywayPassword                          := "070c4efba10a37d0e04f056e3c3a4e6e9e7577fd54e28f97a91de5e543c09f23",
-    /*flywayUrl                               := "jdbc:postgresql://localhost/qcmio",
+    flywayPassword                          := "070c4efba10a37d0e04f056e3c3a4e6e9e7577fd54e28f97a91de5e543c09f23",*/
+    flywayUrl                               := "jdbc:postgresql://localhost/qcmio",
     flywayUser                              := "qcmio",
-    flywayPassword                          := "qcmiopwd",*/
+    flywayPassword                          := "qcmiopwd",
     flywayLocations += "db/migration"
   )
 

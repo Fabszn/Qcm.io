@@ -4,12 +4,12 @@ CREATE SEQUENCE seq_account START 1;
 CREATE SEQUENCE seq_user START 1;
 
 CREATE TABLE t_question (
-pkid_question INT CONSTRAINT pk_question PRIMARY KEY,
+pkid_question INT CONSTRAINT pk_question PRIMARY KEY DEFAULT nextval('seq_question'),
 label varchar not null
 );
 
 CREATE TABLE t_reponse (
-pkid_reponse INT CONSTRAINT pk_reponse PRIMARY KEY,
+pkid_reponse INT CONSTRAINT pk_reponse PRIMARY KEY DEFAULT nextval('seq_reponse'),
 fkid_question INT not null,
 label varchar not null,
 is_correct boolean not null,
