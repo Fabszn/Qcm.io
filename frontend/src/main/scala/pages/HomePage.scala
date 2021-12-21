@@ -6,9 +6,10 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 import io.circe.parser._
 import org.qcmio.Keys
 import org.qcmio.front.{Configuration, QcmIoCss, WithGlobalState}
-import org.qcmio.model.{HttpQuestion, HttpSimpleReponse}
+import org.qcmio.model.{HttpQuestion, HttpReponse, HttpSimpleReponse, Question}
 import org.scalajs.dom
-import org.scalajs.dom. html
+import org.scalajs.dom.ext.Ajax.InputData
+import org.scalajs.dom.{console, html}
 
 object HomePage extends WithGlobalState {
 
@@ -32,19 +33,27 @@ object HomePage extends WithGlobalState {
   def displayQuestion(httpQuestion: HttpQuestion): Div = {
   div(
       httpQuestion.label.value,
-      displayReponses(httpQuestion.reponses)
+      displayReponses(httpQuestion.id.getOrElse(Question.Id(-100)),httpQuestion.reponses)
     )
   }
 
-  def displayReponses(reponses: Seq[HttpSimpleReponse]): Div = {
+  val reponseObserver:Observer[Any] = Observer[Any](onNext = hr => {
+    console.log("hr")
+    AjaxEventStream.post("", "data=InputData()", headers = Map(Keys.tokenHeader -> dom.window.localStorage.getItem(Keys.tokenLoSto)))
+  }
+
+  )
+
+  def displayReponses(idQuestion:Question.Id,reponses: Seq[HttpSimpleReponse]): Div = {
     div(
       cls := QcmIoCss.reponses.className.value,
       reponses.grouped(2).map(lotReponses => div(
         ul(
           lotReponses.map(r =>
-            li(label(r.label.value), input(typ("radio"),name:="q1"))
+            li(label(r.label.value),value(r.label.value),  input(onClick.mapTo(r) --> reponseObserver,typ("radio"),name:=idQuestion.value.toString))
           )
         ))
+
       ).toSeq)
   }
 

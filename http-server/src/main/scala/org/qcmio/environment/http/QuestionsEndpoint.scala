@@ -5,7 +5,6 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.middleware.CORS
 import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.qcmio.auth.AuthenticatedUser
@@ -13,7 +12,8 @@ import org.qcmio.environment.repository.QuestionRepository
 import org.qcmio.environment.repository.QuestionsRepository.{question, reponse}
 import org.qcmio.environment.utils.Mapper.{mapperAll, mapperOne}
 import org.qcmio.model
-import org.qcmio.model.{HttpReponse, Question}
+import org.qcmio.model.{HttpReponse, Question, Reponse}
+import zio.RIO
 import zio.interop.catz._
 
 import scala.util.Try
@@ -31,6 +31,15 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
     def unapply(s: String): Option[Question.Id] = {
       if (s.nonEmpty)
         Try(Question.Id(s.toLong)).toOption
+      else
+        None
+    }
+  }
+
+  object ReponseIdVar {
+    def unapply(s:String):Option[Reponse.Id] = {
+      if (s.nonEmpty)
+        Try(Reponse.Id(s.toLong)).toOption
       else
         None
     }
@@ -68,6 +77,9 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
         res <- question.updateQuestion(id, lbl)
         json <- Created(res.asJson)
       } yield json
+    case authReq@PUT -> (Root / QuestionIdVar(idq) / "reponse" / ReponseIdVar(idr) ) as user =>
+      println(s"test ${idq}")
+      Created("")
   }
 
   def routes(middleware: AuthMiddleware[QTask, AuthenticatedUser]): HttpRoutes[QTask] = Router(
