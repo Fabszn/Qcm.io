@@ -1,21 +1,30 @@
 package org.qcmio
 
 import io.circe.generic.semiauto._
-import io.circe.{Decoder, Encoder}
+import io.circe.{Decoder, Encoder, HCursor, Json}
 import org.qcmio.model.Account.{LastConnexionDate, Password}
+import org.qcmio.model.kind._
 import org.qcmio.model.Reponse.IsCorrect
+import org.qcmio.model.UserReponse.UserRep
 
-import java.time.ZonedDateTime
+import java.time.{LocalDate, ZonedDateTime}
 
 object model {
 
+  type QR = (Question, Seq[Reponse])
 
-  type QR = (Question,Seq[Reponse])
+  final case class Examen(id:Examen.Id=Examen.Id(-1), date:LocalDate,label:Examen.Label)
+
+  object Examen {
+    final case class Id(value: Long) extends AnyVal
+    final case class Label(value: String) extends AnyVal
+  }
 
   final case class Question(
-                             id: Question.Id = Question.Id(-1),
-                             label: Question.Label
-                           )
+      id: Question.Id = Question.Id(-1),
+      label: Question.Label,
+      kind: Kind = Single
+  )
 
 
   object Question {
@@ -31,16 +40,56 @@ object model {
     object Label {
       implicit val labelDecoder: Decoder[Label] = deriveDecoder[Label]
     }
+
+
   }
 
+  object kind {
+    sealed trait Kind
+
+    case object Single   extends Kind
+    case object Multiple extends Kind
+    case object Text     extends Kind
+
+    def from = (k:Kind) =>  k match {
+      case Single => "Single"
+      case Multiple => "Multiple"
+      case Text => "Multiple"
+    }
+
+    def to= (s:String) =>  s match {
+      case "Single" => Single
+      case "Multiple" => Multiple
+      case "Text" => Text
+    }
+
+    implicit val encodeFoo: Encoder[Kind] = new Encoder[Kind] {
+      final def apply(a: Kind): Json = {
+        Json.obj(
+        ("kind", Json.fromString(from(a)))
+      )
+      }
+    }
+
+    implicit val decodeFoo: Decoder[Kind] = new Decoder[Kind] {
+      final def apply(c: HCursor): Decoder.Result[Kind] =
+        for {
+          jkind <- c.downField("kind").as[String]
+        } yield {
+         to(jkind)
+        }
+    }
+
+
+
+  }
 
   final case class Reponse(
-                            id: Reponse.Id = Reponse.Id(-1),
-                            label: Reponse.Label,
-                            questionId: Question.Id,
-                            isCorrect: IsCorrect
-
-                          )
+      id: Reponse.Id = Reponse.Id(-1),
+      label: Reponse.Label,
+      questionId: Question.Id,
+      isCorrect: IsCorrect
+  )
 
   object Reponse {
     final case class Id(value: Long) extends AnyVal
@@ -68,12 +117,27 @@ object model {
 
   }
 
+
+  final case class UserReponse(
+                                id:UserReponse.Id=UserReponse.Id(-1),
+                                idQuestion:Question.Id,
+                                idExamen:Examen.Id,
+                                kind:Kind,
+                                reponses:Seq[UserRep],
+                                dateTime:ZonedDateTime=ZonedDateTime.now
+                              )
+
+  object UserReponse{
+    final case class Id(value: Long) extends AnyVal
+    final case class UserRep(value:String) extends AnyVal
+  }
+
   final case class User(
-                         id: User.Id,
-                         prenom: User.Prenom,
-                         nom: User.Nom,
-                         email: User.Email
-                           )
+      id: User.Id,
+      prenom: User.Prenom,
+      nom: User.Nom,
+      email: User.Email
+  )
 
   object User {
     final case class Id(value: Long) extends AnyVal
@@ -92,24 +156,23 @@ object model {
     final case class Mdp(value: String) extends AnyVal
   }
 
-  final case class Account(id: Account.Id, idUser: User.Id, lastConnexion: LastConnexionDate, mdp:Password)
+  final case class Account(id: Account.Id, idUser: User.Id, lastConnexion: LastConnexionDate, mdp: Password)
 
   object Account {
     final case class Id(value: Long) extends AnyVal
 
     final case class LastConnexionDate(value: ZonedDateTime) extends AnyVal
 
-    final case class Password(value:String) extends AnyVal
+    final case class Password(value: String) extends AnyVal
 
   }
 
-
   final case class HttpReponse(
-                                id: Option[model.Reponse.Id],
-                                idQuestion: model.Question.Id,
-                                label: model.Reponse.Label,
-                                isCorrect: IsCorrect
-                              )
+      id: Option[model.Reponse.Id],
+      idQuestion: model.Question.Id,
+      label: model.Reponse.Label,
+      isCorrect: IsCorrect
+  )
 
   object HttpReponse {
     implicit val hrDecoder: Decoder[HttpReponse] = deriveDecoder[HttpReponse]
@@ -117,25 +180,25 @@ object model {
   }
 
   final case class HttpSimpleReponse(
-                                id: Option[model.Reponse.Id],
-                                idQuestion: model.Question.Id,
-                                label: model.Reponse.Label
-                              )
+      id: Option[model.Reponse.Id],
+      idQuestion: model.Question.Id,
+      label: model.Reponse.Label
+  )
 
   object HttpSimpleReponse {
     implicit val hrDecoder: Decoder[HttpSimpleReponse] = deriveDecoder[HttpSimpleReponse]
     implicit val hrEncoder: Encoder[HttpSimpleReponse] = deriveEncoder[HttpSimpleReponse]
   }
 
-
-  final case class HttpQuestion(id: Option[Question.Id] = None,
-                                label: Question.Label,
-                                reponses: Seq[HttpSimpleReponse] = Seq.empty[HttpSimpleReponse]
-                               )
+  final case class HttpQuestion(
+      id: Option[Question.Id] = None,
+      label: Question.Label,
+      kind: Kind,
+      reponses: Seq[HttpSimpleReponse] = Seq.empty[HttpSimpleReponse]
+  )
 
   object HttpQuestion {
     implicit val hqDecoder: Decoder[HttpQuestion] = deriveDecoder[HttpQuestion]
   }
-
 
 }

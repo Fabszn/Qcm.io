@@ -21,7 +21,7 @@ import scala.util.Try
 
 final class QuestionsEndpoint[R <: QuestionRepository] {
 
-  val dsl = Http4sDsl[QTask]
+  val dsl = Http4sDsl[QCMTask]
 
   import dsl._
 
@@ -45,7 +45,7 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
     }
   }
 
-  private val httpRoutes = AuthedRoutes.of[AuthenticatedUser, QTask] {
+  private val httpRoutes = AuthedRoutes.of[AuthenticatedUser, QCMTask] {
     case GET -> Root / QuestionIdVar(id) as user =>
       (for {
         q <- OptionT(question.getQuestion(id))
@@ -77,12 +77,17 @@ final class QuestionsEndpoint[R <: QuestionRepository] {
         res <- question.updateQuestion(id, lbl)
         json <- Created(res.asJson)
       } yield json
-    case authReq@PUT -> (Root / QuestionIdVar(idq) / "reponse" / ReponseIdVar(idr) ) as user =>
-      println(s"test ${idq}")
-      Created("")
+    case POST -> (Root / QuestionIdVar(idq) / "reponse" / ReponseIdVar(idr) ) as user =>
+      for{
+
+        d <- Created("")
+      }yield{
+        d
+      }
+
   }
 
-  def routes(middleware: AuthMiddleware[QTask, AuthenticatedUser]): HttpRoutes[QTask] = Router(
+  def routes(middleware: AuthMiddleware[QCMTask, AuthenticatedUser]): HttpRoutes[QCMTask] = Router(
     prefixPath -> middleware(httpRoutes)
   )
 

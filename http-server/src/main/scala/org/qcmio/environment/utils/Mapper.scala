@@ -1,22 +1,22 @@
 package org.qcmio.environment.utils
 
-import org.qcmio.model.{HttpQuestion, HttpReponse, HttpSimpleReponse, QR, Question, Reponse}
+import org.qcmio.model._
 
 object Mapper {
 
   import io.scalaland.chimney.dsl._
 
-
-  def mapperOne(question:Question, reponses:Seq[Reponse]):HttpQuestion ={
+  def mapperOne(question: Question, reponses: Seq[Reponse]): HttpQuestion = {
 
     val hq: HttpQuestion = question.into[HttpQuestion].transform
-    val hrs = reponses.map(_.into[HttpSimpleReponse].withFieldRenamed(_.questionId,_.idQuestion).transform)
+    val hrs              = reponses.map(_.into[HttpSimpleReponse].withFieldRenamed(_.questionId, _.idQuestion).transform)
 
-    hq.copy(reponses = hrs )
+    hq.copy(reponses = hrs)
   }
 
-  def mapperAll(qr :Seq[QR]):Seq[HttpQuestion] ={
-   qr.map{
-     case (question, reponses) => mapperOne(question , reponses)}
+  def mapperAll(qr: Seq[QR]): Seq[HttpQuestion] = {
+    qr.map {
+      case (question, reponses) => mapperOne(question, reponses)
+    }
   }
 }

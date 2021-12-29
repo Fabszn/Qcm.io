@@ -1,18 +1,10 @@
 package org.qcmio.front
 
-
-
-
 object Configuration {
-
 
   case class HttpBackend(port: Int, host: String)
 
-
   final case class FrontEndConfig(httpServer: HttpBackend)
-
-
-
 
   //val frontConf = ConfigSource.default.loadOrThrow[FrontEndConfig]
 

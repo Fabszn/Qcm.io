@@ -7,21 +7,17 @@ import org.http4s.server.Router
 
 final class AdminEndpoint[R] {
 
-  val dsl: Http4sDsl[QTask] = Http4sDsl[QTask]
+  val dsl: Http4sDsl[QCMTask] = Http4sDsl[QCMTask]
 
   import dsl._
 
-private val prefixPath = "/admin"
-  private val httpRoutes: HttpRoutes[QTask] = HttpRoutes.of[QTask] {
-    case GET -> Root   => Ok("Ok  admin!")
+  private val prefixPath = "/admin"
+  private val httpRoutes: HttpRoutes[QCMTask] = HttpRoutes.of[QCMTask] {
+    case GET -> Root => Ok("Ok  admin!")
   }
 
-  val routes: HttpRoutes[QTask] = Router[QTask](
+  val routes: HttpRoutes[QCMTask] = Router[QCMTask](
     prefixPath -> httpRoutes
   )
-
-
-
-
 
 }

@@ -18,11 +18,11 @@ import zio.Task
 final class LoginEndpoint[R <: QuestionRepository](jwtConf: JwtConf) {
   private val logger = LoggerFactory.getLogger("LoginEndpoint")
 
-  private val dsl = Http4sDsl[QTask]
+  private val dsl = Http4sDsl[QCMTask]
 
   import dsl._
 
-  val httpRoutes = HttpRoutes.of[QTask] {
+  val httpRoutes = HttpRoutes.of[QCMTask] {
     case req @ POST -> Root / "login" =>
       for {
         info <- req.as[LoginInfo]

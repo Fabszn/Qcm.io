@@ -28,8 +28,7 @@ object QcmioMain {
         QcmioRouter.router.pushState(LoginPage)
     })
 
-
-   lazy val container = dom.document.getElementById("app-container")
+    lazy val container = dom.document.getElementById("app-container")
     val initModifier: Modifier[Div] = {
       val token = dom.window.localStorage.getItem(Keys.tokenLoSto)
       if (token == null) {
@@ -38,13 +37,13 @@ object QcmioMain {
       } else {
         AjaxEventStream
           .get(s"${Configuration.backendUrl}/api/login/isValid", headers = Map(Keys.tokenHeader -> token))
-          .map(r =>
-           r.status
-          ).recover{
-          case e:AjaxStatusError =>
-            QcmioRouter.router.pushState(LoginPage)
-            Some(e.status)
-        }.debugLogErrors() --> checkTokenObserver
+          .map(r => r.status)
+          .recover {
+            case e: AjaxStatusError =>
+              QcmioRouter.router.pushState(LoginPage)
+              Some(e.status)
+          }
+          .debugLogErrors() --> checkTokenObserver
 
       }
     }
@@ -54,10 +53,8 @@ object QcmioMain {
       child <-- QcmioRouter.splitter(qcmAppState).$view
     )
 
-
     renderOnDomContentLoaded(container, app)
 
   }
-
 
 }

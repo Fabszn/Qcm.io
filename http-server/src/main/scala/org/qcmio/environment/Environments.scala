@@ -8,9 +8,12 @@ import zio.{Has, Layer, ULayer}
 
 object Environments {
 
+  // dependance description
   type HttpServerEnvironment = Configuration with Clock
-  type AppEnvironment = Blocking with Configuration with Clock with QuestionRepository with AdministratorRepository
+  type AppEnvironment = Blocking with Configuration with Clock
+    with QuestionRepository with AdministratorRepository with ExamenRepository
 
+  //dependencies tree
   val httpServerEnvironment: ULayer[HttpServerEnvironment] = Configuration.live ++ Clock.live
   val dbTransactor: Layer[Throwable, Has[DbTransactor.Resource]] =
   Configuration.live ++ Blocking.live >>> DbTransactor.postgres
@@ -20,7 +23,9 @@ object Environments {
     dbTransactor >>> UsersRepository.live
   val adminRepository: Layer[Throwable,AdministratorRepository] =
     dbTransactor >>> AdminRepository.live
+  val examenRepository: Layer[Throwable,ExamenRepository] =
+    dbTransactor >>> ExamenRepository.live
   val appEnvironment: Layer[Throwable,AppEnvironment] =
-    Blocking.live ++ adminRepository ++ userRepository ++ questionRepository ++ httpServerEnvironment
+    Blocking.live ++ adminRepository ++ examenRepository ++ userRepository ++ questionRepository ++ httpServerEnvironment
 
 }

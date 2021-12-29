@@ -7,5 +7,4 @@ trait WithGlobalState {
 
   type QCMGlobalState = Var[QcmState]
 
-
 }

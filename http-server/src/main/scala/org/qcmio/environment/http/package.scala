@@ -19,7 +19,7 @@ package object http {
 
   type ServerRIO[A] = RIO[AppEnvironment, A]
   type OT[A] = OptionT[ServerRIO, A]
-  type QTask[A] = RIO[AppEnvironment, A]
+  type QCMTask[A] = RIO[AppEnvironment, A]
 
   implicit def jsonEncoder[F[_] : Applicative, A](
                                                    implicit

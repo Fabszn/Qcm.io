@@ -11,7 +11,7 @@ import org.qcmio.front.{Configuration, QcmIoCss, QcmioRouter, WithGlobalState}
 import org.scalajs.dom
 import org.scalajs.dom.{console, html}
 
-object LoginPage extends WithGlobalState{
+object LoginPage extends WithGlobalState {
 
   case class LoginState(login: String = "", mdp: String = "")
 
@@ -27,7 +27,6 @@ object LoginPage extends WithGlobalState{
   val loginWriter = stateVar.updater[String]((state, login) => state.copy(login = login))
 
   val pwdWriter = stateVar.updater[String]((state, pass) => state.copy(mdp = pass))
-
 
   def loginPage(gState: QCMGlobalState) = div(
     cls := QcmIoCss.loginForm.className.value,
@@ -55,29 +54,31 @@ object LoginPage extends WithGlobalState{
         "Submit",
         composeEvents(onClick)(_.flatMap(_ => {
           AjaxEventStream
-            .post(s"${Configuration.backendUrl}/api/login", LoginInfo(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString())
+            .post(
+              s"${Configuration.backendUrl}/api/login",
+              LoginInfo(stateVar.signal.now.login, stateVar.signal.now.mdp).asJson.toString()
+            )
             .map(r => {
               dom.window.localStorage.setItem(Keys.tokenLoSto, r.getResponseHeader(Keys.tokenHeader))
               r.getResponseHeader(Keys.tokenHeader)
-            }).recover {
-            case err: AjaxStreamError => {
-              console.log(err.getMessage)
-              Some(err.getMessage)
+            })
+            .recover {
+              case err: AjaxStreamError => {
+                console.log(err.getMessage)
+                Some(err.getMessage)
+              }
             }
-          }
         })) --> (
-          (t: String) => {
-            gState.update(_.copy(token = Some(t)))
-            t
-          }
-          ).andThen(e => {
+            (t: String) => {
+              gState.update(_.copy(token = Some(t)))
+              t
+            }
+        ).andThen(e => {
           console.log(s"message $e")
           QcmioRouter.router.pushState(HomePage)
         })
-
       )
     )
-
   )
 
 }

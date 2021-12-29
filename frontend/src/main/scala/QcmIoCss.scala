@@ -8,7 +8,6 @@ object QcmIoCss extends StyleSheet.Inline {
     backgroundColor(Color("red"))
   )
 
-
   val loginForm = style(
     display.flex,
     justifyContent.center,
@@ -25,13 +24,10 @@ object QcmIoCss extends StyleSheet.Inline {
     borderColor(Color("gray"))
   )
 
-
-  val questions = style(display.flex,flexDirection.column)
+  val questions = style(display.flex, flexDirection.column)
   val reponses = style(
     display.flex,
     flexDirection.row,
     justifyContent.center
   )
 }
-
-
