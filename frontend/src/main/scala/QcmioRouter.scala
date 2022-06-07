@@ -21,12 +21,12 @@ object QcmioRouter extends WithGlobalState {
 
   val loginRoute = Route.static(LoginPage, root / "login" / endOfSegments)
   val homeRoute  = Route.static(HomePage, root / "home" / endOfSegments)
-  val createExamRoute  = Route.static(HomePage, root / "examen" / endOfSegments)
+  val createExamRoute  = Route.static(ExamenPage, root / "examen" / endOfSegments)
 
   val entryPoint = Route.static(EntryPage, root / "qcm" / "index.html" / endOfSegments)
 
   val router = new Router[Page](
-    routes          = List(entryPoint, loginRoute, homeRoute),
+    routes          = List(entryPoint, loginRoute, homeRoute,createExamRoute),
     getPageTitle    = _.toString, // mock page title (displayed in the browser tab next to favicon)
     serializePage   = page => write(page)(rw), // serialize page data for storage in History API log
     deserializePage = pageStr => read(pageStr)(rw) // deserialize the above

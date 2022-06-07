@@ -4,23 +4,53 @@ import com.raquo.airstream.web.AjaxEventStream
 import com.raquo.laminar.api.L._
 import com.raquo.laminar.nodes.ReactiveHtmlElement
 import io.circe.parser._
+import io.laminext.syntax.tailwind
 import org.qcmio.Keys
-import org.qcmio.front.{Configuration, QcmIoCss, WithGlobalState}
+import org.qcmio.front.{Configuration, QcmIoCss, QcmioMain, WithGlobalState}
 import org.qcmio.model.{HttpQuestion, HttpSimpleReponse, Question, Reponse}
 import org.scalajs.dom
 import org.scalajs.dom.html
+import io.laminext.syntax.tailwind._
+
 
 object HomePage extends WithGlobalState {
 
   case class QcmState(token: Option[String] = None) {
     def getToken: String = token.getOrElse("None token available")
+
   }
 
   val questionList = Var(Seq.empty[HttpQuestion])
 
+
+
   def homePage(gstate: QCMGlobalState) =
     div(
-     div( a(href:="http://localhost:8088/examen", "hell")),
+     div(button.btn.md.fill.blue(
+       "Show Modal",onClick --> { _ =>
+
+         QcmioMain.modalContent.writer.onNext(
+         Some(
+           ModalContent(
+             div(
+               div(
+                 cls := "p-8",
+                 "I'm in the modal!",
+               ),
+               div(
+                 cls := "p-8",
+                 button.btn.md.outline.blue(
+                   "close me",
+                   onClick.mapTo(None) -->  QcmioMain.modalContent.writer
+                 )
+               )
+             ),
+             Some(Observer(_ =>  QcmioMain.modalContent.writer.onNext(None)))
+           )
+         )
+       )
+
+     })),
       div(
         loadQuestions(gstate),
         cls := QcmIoCss.questions.className.value,
@@ -48,11 +78,6 @@ object HomePage extends WithGlobalState {
         headers = Map(Keys.tokenHeader -> dom.window.localStorage.getItem(Keys.tokenLoSto))
       )
       .debugLogErrors()
-
-  val reponseObserver: Observer[HttpSimpleReponse] = Observer[HttpSimpleReponse](onNext = hr => {
-
-    saveReponseByQuestion(hr)
-  })
 
   def displaySingleReponses(idQuestion: Question.Id, reponses: Seq[HttpSimpleReponse]): Div = {
     div(

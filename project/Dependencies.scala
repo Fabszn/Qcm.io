@@ -12,15 +12,18 @@ object Dependencies {
     lazy val quill = "3.6.1"
     lazy val doobieVersion = "0.12.1"
     lazy val circe = "0.13.0"
-    lazy val scalaJsDom = "1.1.0"
+    lazy val scalaJsDom = "2.0.0"
     lazy val laminar = "0.13.1"
-    lazy val scalaCss = "0.8.0-RC1"
-    lazy val waypoint = "0.4.2"
+    lazy val scalaCss = "1.0.0"
+    lazy val waypoint = "0.5.0"
     lazy val upickle = "1.3.13"
     lazy val scalaJwt = "9.0.2"
     lazy val scalaTest = "3.2.10"
     lazy val chimneyVersion = "0.6.1"
+    lazy val flywayVersion              = "7.4.0"
   }
+
+  lazy val flyway = "org.flywaydb" % "flyway-core" % flywayVersion
 
   lazy val scalaJwt = "com.github.jwt-scala" %% "jwt-circe" % Version.scalaJwt
 

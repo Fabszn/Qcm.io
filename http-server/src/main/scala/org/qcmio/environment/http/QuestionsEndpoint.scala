@@ -19,7 +19,7 @@ import zio.interop.catz._
 import scala.util.Try
 
 
-final class QuestionsEndpoint[R <: QuestionRepository] {
+final class QuestionsEndpoint {
 
   val dsl = Http4sDsl[QCMTask]
 

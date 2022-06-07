@@ -74,7 +74,6 @@ object LoginPage extends WithGlobalState {
               t
             }
         ).andThen(e => {
-          console.log(s"message $e")
           QcmioRouter.router.pushState(HomePage)
         })
       )
