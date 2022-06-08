@@ -6,10 +6,10 @@ object Dependencies {
 
 
   object Version {
-    lazy val zioVersion = "1.0.4-2"
+    lazy val zioVersion = "1.0.13"
     lazy val `zio-interop` = "2.3.1.0"
     lazy val Http4sVersion = "0.21.24"
-    lazy val quill = "3.6.1"
+    lazy val quillVersion = "3.16.3"
     lazy val doobieVersion = "0.12.1"
     lazy val circe = "0.13.0"
     lazy val scalaJsDom = "2.0.0"
@@ -54,7 +54,14 @@ lazy val chimney = "io.scalaland" %% "chimney" % chimneyVersion
   lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
   lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.14.1"
 
-  val quillJdbc = "io.getquill" %% "quill-jdbc" % Version.quill
+  lazy val quill = Seq(
+    "io.getquill" %% "quill-jdbc-zio" % quillVersion,
+    "io.getquill" %% "quill-zio"      % quillVersion,
+    "io.getquill" %% "quill-jdbc"     % quillVersion,
+    "io.getquill" %% "quill-sql"      % quillVersion,
+    "io.getquill" %% "quill-core"     % quillVersion,
+    "io.getquill" %% "quill-engine"   % quillVersion
+  )
 
 
   lazy val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest % "test"

@@ -7,24 +7,6 @@ version := "1.0"
 
 ThisBuild / scalaVersion  := "2.13.6"
 
-
-
-
-/*lazy val db = (project in file("db"))
-  .enablePlugins(FlywayPlugin)
-  .settings(
-    libraryDependencies += "org.postgresql" % "postgresql" % "42.2.23",
-   /* flywayUrl                               := "jdbc:postgresql://ec2-34-250-19-18.eu-west-1.compute.amazonaws.com/d5b2c9qv4lgkm",
-    flywayUser                              := "tffifyrbukuzai",
-    flywayPassword                          := "070c4efba10a37d0e04f056e3c3a4e6e9e7577fd54e28f97a91de5e543c09f23",*/
-    flywayUrl                               := "jdbc:postgresql://localhost/qcmio",
-    flywayUser                              := "qcmio",
-    flywayPassword                          := "qcmiopwd",
-    flywayLocations += "db/migration"
-  )*/
-
-
-
 lazy val myScalacOptions = Seq(
   "-Ywarn-unused:_",
   "-Ywarn-dead-code",
@@ -32,9 +14,8 @@ lazy val myScalacOptions = Seq(
 
 )
 
-lazy val http = (project in file("http-server"))
-  .enablePlugins(SbtWeb,JavaAppPackaging, DockerPlugin, DockerComposePlugin)
-
+lazy val http = (project in file("."))
+  .enablePlugins(JavaAppPackaging)
   .settings(
     scalacOptions := myScalacOptions,
     maintainer := "Fabrice Sznajderman",
@@ -50,7 +31,7 @@ lazy val http = (project in file("http-server"))
       scalaTest,
       chimney,
       flyway
-    ) ++ circle ++ doobie,
+    ) ++ circle ++ quill,
       addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
   )
 
