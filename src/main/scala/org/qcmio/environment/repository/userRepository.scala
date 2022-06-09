@@ -1,13 +1,12 @@
 package org.qcmio.environment.repository
 
-
-import org.qcmio.environment.domain.model._
+import org.qcmio.environment.domain.model.{Account, User}
 import zio._
 
 import javax.sql.DataSource
 
+object userRepository {
 
-object usersRepository {
 
   val layer: URLayer[Has[DataSource], Has[UserRepository]] =
     (UsersRepository(_)).toLayer

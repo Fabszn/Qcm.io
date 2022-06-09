@@ -8,15 +8,10 @@ object Dependencies {
   object Version {
     lazy val zioVersion = "1.0.13"
     lazy val `zio-interop` = "2.3.1.0"
-    lazy val Http4sVersion = "0.21.24"
+    lazy val Http4sVersion = "0.23.10"
     lazy val quillVersion = "3.16.3"
     lazy val doobieVersion = "0.12.1"
     lazy val circe = "0.13.0"
-    lazy val scalaJsDom = "2.0.0"
-    lazy val laminar = "0.13.1"
-    lazy val scalaCss = "1.0.0"
-    lazy val waypoint = "0.5.0"
-    lazy val upickle = "1.3.13"
     lazy val scalaJwt = "9.0.2"
     lazy val scalaTest = "3.2.10"
     lazy val chimneyVersion = "0.6.1"
@@ -26,15 +21,6 @@ object Dependencies {
   lazy val flyway = "org.flywaydb" % "flyway-core" % flywayVersion
 
   lazy val scalaJwt = "com.github.jwt-scala" %% "jwt-circe" % Version.scalaJwt
-
-  lazy val doobie = Seq(
-    "org.tpolecat" %% "doobie-core" % doobieVersion,
-    "org.tpolecat" %% "doobie-postgres" % doobieVersion, // Postgres driver 42.2.8 + type mappings.
-    "org.tpolecat" %% "doobie-hikari" % doobieVersion,
-    "org.tpolecat" %% "doobie-specs2" % doobieVersion % "test", // Specs2 support for typechecking statements.
-    "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test",
-    "org.tpolecat" %% "doobie-quill" % doobieVersion
-  )
 
   lazy val circle = Seq(
     "io.circe" %% "circe-core" % Version.circe,

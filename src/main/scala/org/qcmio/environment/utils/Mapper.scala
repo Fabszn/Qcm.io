@@ -1,6 +1,7 @@
 package org.qcmio.environment.utils
 
-import org.qcmio.model._
+import org.qcmio.environment.domain.model._
+
 
 object Mapper {
 

@@ -6,6 +6,8 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.qcmio.auth.AuthenticatedUser
+import org.qcmio.environment.domain.auth.AuthenticatedUser
+import org.qcmio.environment.domain.model.Examen
 import org.qcmio.environment.repository.ExamenRepository
 import org.qcmio.environment.repository.ExamenRepository.examen
 import org.qcmio.model.Examen
@@ -14,7 +16,7 @@ import zio.interop.catz._
 import scala.util.Try
 
 
-final class ExamensEndpoint[R <: ExamenRepository] {
+object examensAPI {
 
   val dsl = Http4sDsl[QCMTask]
 
@@ -46,9 +48,7 @@ final class ExamensEndpoint[R <: ExamenRepository] {
 
   }
 
-  def routes(middleware: AuthMiddleware[QCMTask, AuthenticatedUser]): HttpRoutes[QCMTask] = Router(
-    prefixPath -> middleware(httpRoutes)
-  )
+
 
 
 }

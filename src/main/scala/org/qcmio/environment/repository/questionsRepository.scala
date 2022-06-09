@@ -38,39 +38,44 @@ object questionsRepository {
   }
 
   object question {
-    /* def saveQuestion(q: Question.Label): RIO[QuestionRepository, Long] =
-       RIO.accessM(_.get.saveQuestion(q))
+     def saveQuestion(q: Question.Label): RIO[Has[QuestionRepository], Long] =
+       ZIO.serviceWith[QuestionRepository](_.saveQuestion(q))
 
-     def getQuestion(id: Question.Id): RIO[QuestionRepository, Option[Question]] =
-       RIO.accessM(_.get.getQuestion(id))
+     def getQuestion(id: Question.Id): RIO[Has[QuestionRepository], Option[Question]] =
+       ZIO.serviceWith[QuestionRepository](_.getQuestion(id))
 
-     def getQuestions: RIO[QuestionRepository, Seq[Question]] =
-       RIO.accessM(_.get.getQuestions)
 
-     def updateQuestion(id: Question.Id, label: Question.Label): RIO[QuestionRepository, Long] =
-       RIO.accessM(_.get.updateQuestion(id, label))
+     def getQuestions: RIO[Has[QuestionRepository], Seq[Question]] =
+       ZIO.serviceWith[QuestionRepository](_.getQuestions)
 
-     def getReponsesByQuestionId(id: Question.Id): RIO[QuestionRepository, Seq[Reponse]] =
-       RIO.accessM(_.get.getReponsesByQuestionId(id))
+     def updateQuestion(id: Question.Id, label: Question.Label): RIO[Has[QuestionRepository], Long] =
+       ZIO.serviceWith[QuestionRepository](_.updateQuestion(id, label))
 
-     def getQuestionReponses(id: Question.Id): RIO[QuestionRepository, Option[QR]] =
-       RIO.accessM(_.get.getQuestionReponses(id))
 
-     def getAllQuestionsReponses: RIO[QuestionRepository, Seq[QR]] =
-       RIO.accessM(_.get.getAllQuestionsReponses)
-       */
+
+     def getReponsesByQuestionId(id: Question.Id): RIO[Has[QuestionRepository], Seq[Reponse]] =
+       ZIO.serviceWith[QuestionRepository](_.getReponsesByQuestionId(id))
+
+     def getQuestionReponses(id: Question.Id): RIO[Has[QuestionRepository], Option[QR]] =
+       ZIO.serviceWith[QuestionRepository](_.getQuestionReponses(id))
+
+     def getAllQuestionsReponses: RIO[Has[QuestionRepository], Seq[QR]] =
+       ZIO.serviceWith[QuestionRepository](_.getAllQuestionsReponses)
+
+
 
   }
 
   object reponse {
-    /* def saveReponse(r: Reponse): RIO[QuestionRepository, Long] =
-       RIO.accessM(_.get.saveReponse(r))
+     def saveReponse(r: Reponse): RIO[Has[QuestionRepository], Long] =
+       ZIO.serviceWith[QuestionRepository](_.saveReponse(r))
 
-     def getReponse(id: Reponse.Id): RIO[QuestionRepository, Option[Reponse]] =
-       RIO.accessM(_.get.getReponse(id))
+     def getReponse(id: Reponse.Id): RIO[Has[QuestionRepository], Option[Reponse]] =
+       ZIO.serviceWith[QuestionRepository](_.getReponse(id))
 
-     def updateReponse(id: Reponse.Id, reponse: Reponse): RIO[QuestionRepository, Long] =
-       RIO.accessM(_.get.updateReponse(id, reponse))*/
+     def updateReponse(id: Reponse.Id, reponse: Reponse): RIO[Has[QuestionRepository], Long] =
+       ZIO.serviceWith[QuestionRepository](_.updateReponse(id, reponse))
+
 
   }
 

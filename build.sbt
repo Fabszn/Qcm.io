@@ -1,4 +1,3 @@
-import Dependencies.Version.flywayVersion
 import Dependencies._
 
 version := "1.0"
@@ -14,7 +13,7 @@ lazy val myScalacOptions = Seq(
 
 )
 
-lazy val http = (project in file("."))
+lazy val qcmio = (project in file("."))
   .enablePlugins(JavaAppPackaging)
   .settings(
     scalacOptions := myScalacOptions,
