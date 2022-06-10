@@ -12,7 +12,7 @@ object auth {
 
   case object Student extends Role
 
-  case class AuthenticatedUser(login: String, role: Role = Student)
+  case class AuthenticatedUser(token:String,login: String, role: Role = Student)
 
   final case class LoginInfo(login: String, mdp: String)
 

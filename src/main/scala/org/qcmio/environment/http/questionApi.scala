@@ -18,7 +18,7 @@ import scala.util.Try
 
 object questionApi {
 
-  val dsl = Http4sDsl[QCMTask]
+  val dsl = Http4sDsl[ApiTask]
 
   import dsl._
 
@@ -40,7 +40,7 @@ object questionApi {
     }
   }
 
-  def  api = AuthedRoutes.of[AuthenticatedUser, QCMTask] {
+  val  api = AuthedRoutes.of[UserInfo, ApiTask] {
     case GET -> Root / QuestionIdVar(id) as user =>
       (for {
         q <- OptionT(question.getQuestion(id))

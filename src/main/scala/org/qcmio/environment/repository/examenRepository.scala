@@ -2,6 +2,7 @@ package org.qcmio.environment.repository
 
 import org.qcmio.environment.domain.model._
 import zio._
+
 import javax.sql.DataSource
 
 object examenRepository {
@@ -54,6 +55,7 @@ object examenRepository {
 
   object examen {
 
+    def createExam(exam: Examen): RIO[Has[ExamenRepository], Long] = ZIO.serviceWith[ExamenRepository](_.createExam(exam))
 
   }
 

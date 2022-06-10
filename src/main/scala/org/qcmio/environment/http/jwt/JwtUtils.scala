@@ -1,7 +1,7 @@
 package org.qcmio.environment.http.jwt
 
 import org.qcmio.environment.config.config.JwtConf
-import org.qcmio.model.User
+import org.qcmio.environment.domain.model.User
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 
 import java.time.Instant

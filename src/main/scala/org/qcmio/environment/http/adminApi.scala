@@ -5,14 +5,14 @@ import org.http4s.dsl.Http4sDsl
 import org.qcmio.environment.domain.auth.AuthenticatedUser
 import zio.interop.catz._
 
-object AdminApi {
+object adminApi {
 
-  val dsl: Http4sDsl[QCMTask] = Http4sDsl[QCMTask]
+  val dsl: Http4sDsl[ApiTask] = Http4sDsl[ApiTask]
 
   import dsl._
 
 
- def api: AuthedRoutes[AuthenticatedUser, QCMTask] = AuthedRoutes.of[AuthenticatedUser,QCMTask] {
+ val api: AuthedRoutes[UserInfo, ApiTask] = AuthedRoutes.of[UserInfo,ApiTask] {
     case GET -> Root as user => Ok("Ok  admin!")
   }
 

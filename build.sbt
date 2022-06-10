@@ -29,7 +29,8 @@ lazy val qcmio = (project in file("."))
         scalaJwt,
       scalaTest,
       chimney,
-      flyway
+      flyway,
+      postgresDriver
     ) ++ circle ++ quill,
       addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
   )

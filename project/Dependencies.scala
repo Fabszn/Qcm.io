@@ -7,15 +7,15 @@ object Dependencies {
 
   object Version {
     lazy val zioVersion = "1.0.13"
-    lazy val `zio-interop` = "2.3.1.0"
+    lazy val `zio-interop` = "3.2.9.0"
     lazy val Http4sVersion = "0.23.10"
     lazy val quillVersion = "3.16.3"
-    lazy val doobieVersion = "0.12.1"
     lazy val circe = "0.13.0"
     lazy val scalaJwt = "9.0.2"
     lazy val scalaTest = "3.2.10"
     lazy val chimneyVersion = "0.6.1"
     lazy val flywayVersion              = "7.4.0"
+    lazy val driverPostgresVersion      = "42.2.23"
   }
 
   lazy val flyway = "org.flywaydb" % "flyway-core" % flywayVersion
@@ -49,7 +49,7 @@ lazy val chimney = "io.scalaland" %% "chimney" % chimneyVersion
     "io.getquill" %% "quill-engine"   % quillVersion
   )
 
-
+  lazy val postgresDriver = "org.postgresql" % "postgresql" % driverPostgresVersion
   lazy val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest % "test"
 
 }
